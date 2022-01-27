@@ -1,13 +1,27 @@
-from cohortextractor import StudyDefinition, patients, codelist, codelist_from_csv  # NOQA
+# Import from cohortextractor
+from cohortextractor import (
+    StudyDefinition,
+    codelist,
+    codelist_from_csv,
+    combine_codelists,
+    filter_codes_by_category,
+    patients,
+    Measure
+)
 
+# Import codelists
+from codelists import *
 
+#Study definition
 study = StudyDefinition(
+
+    # Define default expectations
     default_expectations={
-        "date": {"earliest": "1900-01-01", "latest": "today"},
-        "rate": "uniform",
-        "incidence": 0.5,
+        "date": {"earliest": "2019-04-01", "latest": "today"},
+        "distribution": "poisson",
+        "incidence": "0.1"
     },
-    population=patients.registered_with_one_practice_between(
-        "2019-02-01", "2020-02-01"
-    ),
+
+    # Define population
+    population=patients.with_these_clinical_events(pulse_oximetry_codes, between=["2019-04-01", "today"])
 )

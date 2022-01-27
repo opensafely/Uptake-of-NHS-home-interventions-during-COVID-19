@@ -1,3 +1,10 @@
 {
-  "files": {}
+  "files": {
+    "opensafely-pulse-oximetry.csv": {
+      "id": "opensafely/pulse-oximetry/72ce1380",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/pulse-oximetry/72ce1380/",
+      "downloaded_at": "2022-01-27 16:03:15.705107Z",
+      "sha": "9a82ffa751c58d33e6ddac3f7cef0413ab635bf9"
+    }
+  }
 }

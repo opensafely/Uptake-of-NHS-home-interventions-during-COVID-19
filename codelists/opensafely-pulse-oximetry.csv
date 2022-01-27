@@ -1,0 +1,13 @@
+code,term
+1325191000000108,Telehealth pulse oximetry monitoring started
+1325201000000105,Telehealth pulse oximetry monitoring ended
+1325211000000107,Provision of pulse oximeter
+1325221000000101,Telehealth pulse oximetry monitoring not appropriate
+1325241000000108,Telehealth pulse oximetry monitoring declined
+1325251000000106,Referral to telehealth pulse oximetry monitoring service
+1325261000000109,Referral by telehealth pulse oximetry monitoring service
+1325271000000102,Discharge from telehealth pulse oximetry monitoring service
+1325281000000100,Discussion about telehealth pulse oximetry monitoring
+1325681000000102,Has access to pulse oximeter
+1325691000000100,Oxygen saturation at periphery unknown
+1325701000000100,Oxygen saturation at periphery equivocal
