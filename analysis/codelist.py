@@ -1,4 +1,4 @@
-from cohortextractor import (codelist, codelist_from_csv, combine_codelists)
+from cohortextractor import codelist_from_csv
 
 # Pulse oximetry codes from OpenCodelists
 pulse_oximetry_codes = codelist_from_csv(
