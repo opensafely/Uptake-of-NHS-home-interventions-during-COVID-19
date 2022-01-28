@@ -43,5 +43,5 @@ study = StudyDefinition(
         "incidence": "0.1",
     },
     # Define population
-    **loop_over_codes(pulse_oximetry_codes),
+    population = loop_over_codes(pulse_oximetry_codes),
 )
