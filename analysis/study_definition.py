@@ -15,7 +15,7 @@ def code_assigned_that_week(code):
     return {
         f"flag_{code}": patients.with_these_clinical_events(
             codelist([code], system="snomed"),
-            between=["2019-04-01", "2019-04-07"],
+            between=["2020-04-01", "2020-04-07"],
             find_first_match_in_period=True,
             return_binary_flag=True,
             date_format="YYYY-MM-DD",
@@ -38,7 +38,7 @@ def loop_over_codes(code_list):
 study = StudyDefinition(
     # Define default expectations
     default_expectations={
-        "date": {"earliest": "2019-04-01", "latest": "today"},
+        "date": {"earliest": "2020-04-01", "latest": "today"},
         "distribution": "poisson",
         "incidence": "0.1",
     },
