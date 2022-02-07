@@ -4,3 +4,8 @@ from cohortextractor import codelist_from_csv
 pulse_oximetry_codes = codelist_from_csv(
     "codelists/opensafely-pulse-oximetry.csv", system="snomed", column="code"
 )
+# Add shielding list
+# Shielding list codes from OpenCodelists
+shielding_list = codelist_from_csv(
+    "codelists/primis-covid19-vacc-uptake-shield-v1.csv", system="snomed",
+    column="code")
