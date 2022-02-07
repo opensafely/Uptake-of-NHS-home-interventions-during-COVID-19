@@ -5,6 +5,18 @@
       "url": "https://codelists.opensafely.org/codelist/opensafely/pulse-oximetry/72ce1380/",
       "downloaded_at": "2022-01-27 16:03:15.705107Z",
       "sha": "9a82ffa751c58d33e6ddac3f7cef0413ab635bf9"
+    },
+    "primis-covid19-vacc-uptake-covadm1.csv": {
+      "id": "primis-covid19-vacc-uptake/covadm1/v1",
+      "url": "https://codelists.opensafely.org/codelist/primis-covid19-vacc-uptake/covadm1/v1/",
+      "downloaded_at": "2022-02-07 13:49:48.098590Z",
+      "sha": "5e6a8bef2da93467d11c25affbd33755205e4204"
+    },
+    "primis-covid19-vacc-uptake-shield.csv": {
+      "id": "primis-covid19-vacc-uptake/shield/v1",
+      "url": "https://codelists.opensafely.org/codelist/primis-covid19-vacc-uptake/shield/v1/",
+      "downloaded_at": "2022-02-07 13:54:03.161990Z",
+      "sha": "7edf08877d201478d4f794edb4d4dfe1353cb095"
     }
   }
 }
