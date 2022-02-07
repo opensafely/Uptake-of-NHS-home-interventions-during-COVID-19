@@ -12,7 +12,7 @@ shielding_list = codelist_from_csv(
 
 # First COVID vaccination administration in EMIS
 covid_vaccine_EMIS_codes = codelist_from_csv(
-  "codelists/primis-covid19-vacc-uptake-covadm1.csv",
-  system="snomed",
-  column="code",
+    "codelists/primis-covid19-vacc-uptake-covadm1.csv",
+    system="snomed",
+    column="code",
 )
