@@ -1,4 +1,5 @@
 from typing import Dict, List
+import random
 
 from cohortextractor import codelist, patients
 
@@ -11,7 +12,7 @@ def make_variable(code: str, index_date: str) -> Dict[str, any]:
                 find_first_match_in_period=True,
                 returning="binary_flag",
                 between=[index_date, f"{index_date} + 7 days"],
-                return_expectations={"incidence": 0.2}
+                return_expectations={"incidence": random.randint(1,5)/10}
             )
         )
     }
