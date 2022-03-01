@@ -1,3 +1,5 @@
 opensafely/pulse-oximetry/72ce1380
 primis-covid19-vacc-uptake/covadm1/v1
+primis-covid19-vacc-uptake/covadm2/v1
 primis-covid19-vacc-uptake/shield/v1
+opensafely/nhs-england-care-homes-residential-status/3712ef13/
