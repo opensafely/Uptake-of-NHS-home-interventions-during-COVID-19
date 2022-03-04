@@ -2,7 +2,7 @@
 from cohortextractor import StudyDefinition, patients
 
 # Import codelist
-from codelist import pulse_oximetry_codes, shielding_list, covid_vaccine_EMIS_codes
+from codelist import pulse_oximetry_codes, shielding_list, covid_vaccine_1_EMIS_codes, covid_vaccine_2_EMIS_codes, care_home_codes
 
 from data_processing import loop_over_codes
 
@@ -48,6 +48,14 @@ study = StudyDefinition(
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
     ),
+    # care home
+    care_home=patients.with_these_clinical_events(
+        care_home_codes,
+        find_first_match_in_period=True,
+        on_or_before="index_date",
+        returning="binary_flag",
+        return_expectations={"incidence": 0.25},
+    ),
     # index_of_multiple_deprivation
     index_of_multiple_deprivation=patients.address_as_of(
         date="index_date",
@@ -58,7 +66,7 @@ study = StudyDefinition(
             "category": {"ratios": {"100": 0.1, "200": 0.2, "300": 0.7}},
         },
     ),
-    #     # rural_urban_classification
+    # rural_urban_classification
     rural_urban_classification=patients.address_as_of(
         date="index_date",
         returning="rural_urban_classification",
@@ -94,7 +102,7 @@ study = StudyDefinition(
             "target_disease_matches": "SARS-2 CORONAVIRUS",
         },
         emis={
-            "procedure_codes": covid_vaccine_EMIS_codes,
+            "procedure_codes": covid_vaccine_1_EMIS_codes,
         },
         find_first_match_in_period=True,
         on_or_before="index_date",
@@ -114,7 +122,7 @@ study = StudyDefinition(
             "target_disease_matches": "SARS-2 CORONAVIRUS",
         },
         emis={
-            "procedure_codes": covid_vaccine_EMIS_codes,
+            "procedure_codes": covid_vaccine_2_EMIS_codes,
         },
         find_first_match_in_period=True,
         between=["covid_vax_1_date + 15 days", "index_date"],
@@ -134,7 +142,7 @@ study = StudyDefinition(
             "target_disease_matches": "SARS-2 CORONAVIRUS",
         },
         emis={
-            "procedure_codes": covid_vaccine_EMIS_codes,
+            "procedure_codes": covid_vaccine_2_EMIS_codes,
         },
         find_first_match_in_period=True,
         between=["covid_vax_2_date + 15 days", "index_date"],

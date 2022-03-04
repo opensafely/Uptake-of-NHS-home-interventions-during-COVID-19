@@ -12,11 +12,23 @@
       "downloaded_at": "2022-02-07 13:49:48.098590Z",
       "sha": "5e6a8bef2da93467d11c25affbd33755205e4204"
     },
+    "primis-covid19-vacc-uptake-covadm2.csv": {
+      "id": "primis-covid19-vacc-uptake/covadm2/v1",
+      "url": "https://codelists.opensafely.org/codelist/primis-covid19-vacc-uptake/covadm2/v1/",
+      "downloaded_at": "2022-03-01 10:07:55.006519Z",
+      "sha": "1faed2cda35ad12c432e67a6630cf4f2093aed52"
+    },
     "primis-covid19-vacc-uptake-shield.csv": {
       "id": "primis-covid19-vacc-uptake/shield/v1",
       "url": "https://codelists.opensafely.org/codelist/primis-covid19-vacc-uptake/shield/v1/",
       "downloaded_at": "2022-02-07 13:54:03.161990Z",
       "sha": "7edf08877d201478d4f794edb4d4dfe1353cb095"
+    },
+    "opensafely-nhs-england-care-homes-residential-status.csv": {
+      "id": "opensafely/nhs-england-care-homes-residential-status/3712ef13",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/nhs-england-care-homes-residential-status/3712ef13/",
+      "downloaded_at": "2022-03-01 10:07:18.649571Z",
+      "sha": "357b2af4841e574f7d43bfeff143b39cdfed6997"
     }
   }
 }
