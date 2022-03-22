@@ -6,15 +6,15 @@ expectations:
 actions:
 
   generate_study_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2020-12-01 to 2021-06-01 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-04-01 to 2022-03-15 by week"
     outputs:
       highly_sensitive:
         cohort: output/input_*.csv
 
-  run_model:
+  generate_oximetry_timeseries:
     run: python:latest python analysis/analysis1.py
     needs: [generate_study_population]
     outputs:
       moderately_sensitive:
-        oximetry_sums_table: output/oximetry_sums.csv
-        oximetry_timeseries_figure: output/oximetry_timeseries.png
+        table_1_oximetry_counts: output/table_1_oximetry_counts.csv
+        plot_1_oximetry_timeseries: output/plot_1_oximetry_timeseries.png
