@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 # Create population data frame which includes all weeks and dictionary of cohort size for each individual week
-def create_population_df(dir:str = "../output/")-> pd.DataFrame:
+def create_population_df(dir:str = "../output/")-> tuple[pd.DataFrame, dict]:
     # find the input csv files
     filepaths = [f for f in os.listdir(dir) if (f.startswith('input') and f.endswith('.csv'))]
     # append the directory path to filename
