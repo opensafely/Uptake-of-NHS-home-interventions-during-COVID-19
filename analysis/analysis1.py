@@ -39,9 +39,8 @@ oximetry_sum.to_csv('output/table_1_oximetry_counts.csv')
 plt.figure(figsize=(20, 10))
 plt.rcParams.update({'font.size': 20})
 for column in oximetry_headers:
-    # Use interpolation to replace redacted values
-    interpolated_column = pd.to_numeric(oximetry_sum[column], errors='coerce').interpolate()
-    plt.plot(oximetry_sum["index_date"], interpolated_column)
+    # Plot each line, skipping any non-numeric values
+    plt.plot(oximetry_sum["index_date"], pd.to_numeric(oximetry_sum[column], errors='coerce'))
 plt.legend(oximetry_headers, loc='upper left', bbox_to_anchor=(1.0, 1.0), fontsize = 20)
 plt.xlabel("Date", fontsize = 25)
 plt.title('Use of Pulse Oximetry Codes Over Time', fontsize = 40)
