@@ -29,7 +29,7 @@ for n in range(0,len(oximetry_codes_df)):
 oximetry_sum = population_df.groupby(['index_date'], as_index=False)[oximetry_codes_headers].sum()
 # Rename oximetry headers in oximetry sums data frame
 oximetry_sum.rename(columns=oximetry_dictionary,inplace=True)
-# Redact non-zero values less than or equal to 5 and round all other values up to nearest 5
+# Redact values less than or equal to 5 and round all other values up to nearest 5
 oximetry_sum = redact_and_round_df(oximetry_sum)
 
 # Save the dataframe in outputs folder

@@ -32,7 +32,7 @@ def create_population_df(dir:str = "../output/")-> Tuple[pd.DataFrame, dict]:
 
 
 # Helper function for redact_and_round_df
-# Takes a column of data, redacts any non-zero values less than or equal to 5 and rounds all other values up to nearest 5
+# Takes a column of data, redacts any values less than or equal to 5 and rounds all other values up to nearest 5
 def redact_and_round_column(column: pd.Series) -> pd.Series:
     # New column variable will contain the new values with any necessary redacting and rounding applied
     new_column = []
@@ -40,7 +40,7 @@ def redact_and_round_column(column: pd.Series) -> pd.Series:
     for value in column:
         if type(value) == int or type(value) == float:
             # Redact values less than or equal to 5
-            if value <= 5 and value != 0:
+            if value <= 5:
                 value = "[REDACTED]"
             # Round all values greater than 5 to nearest 5
             else:
@@ -50,7 +50,7 @@ def redact_and_round_column(column: pd.Series) -> pd.Series:
     return(new_column)
 
 
-# Funtion to take a dataframe, redact any non-zero values less than or equal to 5 and round all other values up to nearest 5
+# Funtion to take a dataframe, redact any values less than or equal to 5 and round all other values up to nearest 5
 def redact_and_round_df(df: pd.DataFrame) -> pd.DataFrame:
     # Apply redacting and rounding to each column of the dataframe
     for column in df.columns.values:
