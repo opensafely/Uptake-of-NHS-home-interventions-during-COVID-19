@@ -3,10 +3,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
-# From .analysis_data_processing import create_population_df
 if "." not in sys.path:
     sys.path.insert(0, ".")
-from analysis_data_processing import create_population_df
+from analysis_data_processing import create_population_df, redact_and_round_column, redact_and_round_df
 
 # Create population data frame which includes all weeks and dictionary of cohort size for each individual week
 population_df, cohort_size = create_population_df("output/")
@@ -30,13 +29,19 @@ for n in range(0,len(oximetry_codes_df)):
 oximetry_sum = population_df.groupby(['index_date'], as_index=False)[oximetry_codes_headers].sum()
 # Rename oximetry headers in oximetry sums data frame
 oximetry_sum.rename(columns=oximetry_dictionary,inplace=True)
+# Redact values less than or equal to 5 and round all other values up to nearest 5
+oximetry_sum = redact_and_round_df(oximetry_sum)
+
 # Save the dataframe in outputs folder
 oximetry_sum.to_csv('output/table_1_oximetry_counts.csv') 
 
 # Create timeseries of pulse oximetry codes usage
-plot_1 = oximetry_sum.plot.line('index_date',oximetry_headers, figsize=(20, 10), fontsize = 20).get_figure()
-plt.legend(loc='upper left', bbox_to_anchor=(1.0, 1.0), fontsize = 20)
+plt.figure(figsize=(20, 10))
+plt.rcParams.update({'font.size': 20})
+for column in oximetry_headers:
+    # Plot each line, skipping any non-numeric values
+    plt.plot(oximetry_sum["index_date"], pd.to_numeric(oximetry_sum[column], errors='coerce'))
+plt.legend(oximetry_headers, loc='upper left', bbox_to_anchor=(1.0, 1.0), fontsize = 20)
 plt.xlabel("Date", fontsize = 25)
 plt.title('Use of Pulse Oximetry Codes Over Time', fontsize = 40)
-# Save plot in outputs folder
-plot_1.savefig("output/plot_1_oximetry_timeseries.png", bbox_inches ="tight")
+plt.savefig("output/plot_1_oximetry_timeseries",  bbox_inches ="tight")

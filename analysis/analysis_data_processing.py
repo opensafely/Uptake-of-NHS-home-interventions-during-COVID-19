@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 from typing import Tuple
+import math
 
 # Create population data frame which includes all weeks and dictionary of cohort size for each individual week
 def create_population_df(dir:str = "../output/")-> Tuple[pd.DataFrame, dict]:
@@ -29,3 +30,29 @@ def create_population_df(dir:str = "../output/")-> Tuple[pd.DataFrame, dict]:
     population_df = pd.concat(dfs)
     return population_df, cohort_size
 
+
+# Helper function for redact_and_round_df
+# Takes a column of data, redacts any values less than or equal to 5 and rounds all other values up to nearest 5
+def redact_and_round_column(column: pd.Series) -> pd.Series:
+    # New column variable will contain the new values with any necessary redacting and rounding applied
+    new_column = []
+    # For loop to apply redacting and rounding to all integer or float values in the column
+    for value in column:
+        if type(value) == int or type(value) == float:
+            # Redact values less than or equal to 5
+            if value <= 5:
+                value = "[REDACTED]"
+            # Round all values greater than 5 to nearest 5
+            else:
+                value = int(5 * math.ceil(float(value) / 5))
+        # Resulting value is added to the new column
+        new_column.append(value)
+    return(new_column)
+
+
+# Funtion to take a dataframe, redact any values less than or equal to 5 and round all other values up to nearest 5
+def redact_and_round_df(df: pd.DataFrame) -> pd.DataFrame:
+    # Apply redacting and rounding to each column of the dataframe
+    for column in df.columns.values:
+        df[column] = redact_and_round_column(df[column])
+    return(df)
