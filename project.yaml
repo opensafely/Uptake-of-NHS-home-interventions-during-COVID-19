@@ -18,3 +18,11 @@ actions:
       moderately_sensitive:
         table_1_oximetry_counts: output/table_1_oximetry_counts.csv
         plot_1_oximetry_timeseries: output/plot_1_oximetry_timeseries.png
+
+  generate_age_timeseries:
+    run: python:latest python analysis/analysis2.py
+    needs: [generate_study_population]
+    outputs:
+      moderately_sensitive:
+        table_2_age_counts: output/table_2_age_counts.csv
+        plot_2_age_timeseries: output/plot_2_age_timeseries.png
