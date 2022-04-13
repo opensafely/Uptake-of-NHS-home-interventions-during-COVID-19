@@ -43,7 +43,7 @@ population_df['IMD_decile'] = (population_df['index_of_multiple_deprivation']/32
 
 # Create timeseries for each of the variables
 
-# Define which oximetry codes to create timeseries for
+# Define which oximetry codes to create timeseries breakdowns for
 codes_of_interest = ['1325191000000108', '1325221000000101', '1325241000000108']
 
 # Create timeseries for oximetry codes broken down by sex
