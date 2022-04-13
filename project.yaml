@@ -19,10 +19,44 @@ actions:
         table_1_oximetry_counts: output/table_1_oximetry_counts.csv
         plot_1_oximetry_timeseries: output/plot_1_oximetry_timeseries.png
 
-  generate_age_timeseries:
+  generate_timeseries_breakdowns:
     run: python:latest python analysis/analysis2.py
     needs: [generate_study_population]
     outputs:
       moderately_sensitive:
-        table_2_age_counts: output/table_2_age_counts.csv
-        plot_2_age_timeseries: output/plot_2_age_timeseries.png
+        table_1325191000000108_age_group_counts: output/tables/table_1325191000000108_age_group_counts.csv
+        plot_1325191000000108_age_group_timeseries: output/timeseries/plot_1325191000000108_age_group_timeseries.png
+        table_1325221000000101_age_group_counts: output/tables/table_1325221000000101_age_group_counts.csv
+        plot_1325221000000101_age_group_timeseries: output/timeseries/plot_1325221000000101_age_group_timeseries.png
+        table_1325241000000108_age_group_counts: output/tables/table_1325241000000108_age_group_counts.csv
+        plot_1325241000000108_age_group_timeseries: output/timeseries/plot_1325241000000108_age_group_timeseries.png
+        table_1325191000000108_shielding_counts: output/tables/table_1325191000000108_shielding_counts.csv
+        plot_1325191000000108_shielding_timeseries: output/timeseries/plot_1325191000000108_shielding_timeseries.png
+        table_1325221000000101_shielding_counts: output/tables/table_1325221000000101_shielding_counts.csv
+        plot_1325221000000101_shielding_timeseries: output/timeseries/plot_1325221000000101_shielding_timeseries.png
+        table_1325241000000108_shielding_counts: output/tables/table_1325241000000108_shielding_counts.csv
+        plot_1325241000000108_shielding_timeseries: output/timeseries/plot_1325241000000108_shielding_timeseries.png
+        table_1325191000000108_sex_counts: output/tables/table_1325191000000108_sex_counts.csv
+        plot_1325191000000108_sex_timeseries: output/timeseries/plot_1325191000000108_sex_timeseries.png
+        table_1325221000000101_sex_counts: output/tables/table_1325221000000101_sex_counts.csv
+        plot_1325221000000101_sex_timeseries: output/timeseries/plot_1325221000000101_sex_timeseries.png
+        table_1325241000000108_sex_counts: output/tables/table_1325241000000108_sex_counts.csv
+        plot_1325241000000108_sex_timeseries: output/timeseries/plot_1325241000000108_sex_timeseries.png
+        table_1325191000000108_care_home_counts: output/tables/table_1325191000000108_care_home_counts.csv
+        plot_1325191000000108_care_home_timeseries: output/timeseries/plot_1325191000000108_care_home_timeseries.png
+        table_1325221000000101_care_home_counts: output/tables/table_1325221000000101_care_home_counts.csv
+        plot_1325221000000101_care_home_timeseries: output/timeseries/plot_1325221000000101_care_home_timeseries.png
+        table_1325241000000108_care_home_counts: output/tables/table_1325241000000108_care_home_counts.csv
+        plot_1325241000000108_care_home_timeseries: output/timeseries/plot_1325241000000108_care_home_timeseries.png
+        table_1325191000000108_ethnicity_6_sus_counts: output/tables/table_1325191000000108_ethnicity_6_sus_counts.csv
+        plot_1325191000000108_ethnicity_6_sus_timeseries: output/timeseries/plot_1325191000000108_ethnicity_6_sus_timeseries.png
+        table_1325221000000101_ethnicity_6_sus_counts: output/tables/table_1325221000000101_ethnicity_6_sus_counts.csv
+        plot_1325221000000101_ethnicity_6_sus_timeseries: output/timeseries/plot_1325221000000101_ethnicity_6_sus_timeseries.png
+        table_1325241000000108_ethnicity_6_sus_counts: output/tables/table_1325241000000108_ethnicity_6_sus_counts.csv
+        plot_1325241000000108_ethnicity_6_sus_timeseries: output/timeseries/plot_1325241000000108_ethnicity_6_sus_timeseries.png
+        table_1325191000000108_IMD_decile_counts: output/tables/table_1325191000000108_IMD_decile_counts.csv
+        plot_1325191000000108_IMD_decile_timeseries: output/timeseries/plot_1325191000000108_IMD_decile_timeseries.png
+        table_1325221000000101_IMD_decile_counts: output/tables/table_1325221000000101_IMD_decile_counts.csv
+        plot_1325221000000101_IMD_decile_timeseries: output/timeseries/plot_1325221000000101_IMD_decile_timeseries.png
+        table_1325241000000108_IMD_decile_counts: output/tables/table_1325241000000108_IMD_decile_counts.csv
+        plot_1325241000000108_IMD_decile_timeseries: output/timeseries/plot_1325241000000108_IMD_decile_timeseries.png
