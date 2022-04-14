@@ -95,7 +95,7 @@ def code_specific_analysis(code: str, column_name: str, population_df: pd.DataFr
     counts_df['percentage'] = round(pd.to_numeric(counts_df['counts'], errors='coerce') / pd.to_numeric(counts_df['denominators'], errors = 'coerce') * 100, 1)
 
     # Save the dataframe in outputs folder
-    counts_df.to_csv('output/tables/table_' + code + '_' + column_name + '_counts.csv') 
+    counts_df.to_csv('output/table_' + code + '_' + column_name + '_counts.csv') 
 
     # Plot the counts over time (pivot to create separate columns for each grouping)
     plot_timeseries = counts_df.pivot(index="index_date", columns= column_name, values="percentage").plot(figsize=(20,10), fontsize = 20).get_figure()

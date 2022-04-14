@@ -54,7 +54,7 @@ for code in codes_of_interest:
     for i in range(0, len(legend_labels)):
         legend_labels[i] = new_labels[legend_labels[i]]
     plt.legend(legend_labels, loc='upper left', bbox_to_anchor=(1.0, 1.0), fontsize = 20)
-    plt.savefig("output/timeseries/plot_" + code + "_" + "sex" + "_timeseries.png", bbox_inches ="tight")
+    plt.savefig("output/plot_" + code + "_" + "sex" + "_timeseries.png", bbox_inches ="tight")
 
 # Create timeseries for oximetry codes broken down by care_home
 for code in codes_of_interest:
@@ -65,25 +65,25 @@ for code in codes_of_interest:
         legend_labels[i] = new_labels[legend_labels[i]]
     plt.legend(legend_labels, loc='upper left', bbox_to_anchor=(1.0, 1.0), fontsize = 20)
     plt.title('\n'.join(wrap('Patients with \"' + oximetry_codes_dict[int(code)] + '\" code,\n grouped by ' + 'care home residency')), fontsize = 40)
-    plt.savefig("output/timeseries/plot_" + code + "_" + "care_home" + "_timeseries.png", bbox_inches ="tight")
+    plt.savefig("output/plot_" + code + "_" + "care_home" + "_timeseries.png", bbox_inches ="tight")
 
 # Create timeseries for oximetry codes broken down by ethnicity_6_sus
 for code in codes_of_interest:
     code_specific_analysis(code, 'ethnicity_6_sus', population_df, oximetry_codes_dict)
     plt.title('\n'.join(wrap('Patients with \"' + oximetry_codes_dict[int(code)] + '\" code,\n grouped by ' + 'ethnicity')), fontsize = 40)
-    plt.savefig("output/timeseries/plot_" + code + "_" + "ethnicity_6_sus" + "_timeseries.png", bbox_inches ="tight")
+    plt.savefig("output/plot_" + code + "_" + "ethnicity_6_sus" + "_timeseries.png", bbox_inches ="tight")
 
 # Create timeseries for oximetry codes broken down by IMD
 for code in codes_of_interest:
     code_specific_analysis(code, 'IMD_decile', population_df, oximetry_codes_dict)
     plt.title('\n'.join(wrap('Patients with \"' + oximetry_codes_dict[int(code)] + '\" code,\n grouped by ' + 'IMD decile (1 = most deprived, 10 = least deprived)')), fontsize = 40)
-    plt.savefig("output/timeseries/plot_" + code + "_" + "IMD_decile" + "_timeseries.png", bbox_inches ="tight")
+    plt.savefig("output/plot_" + code + "_" + "IMD_decile" + "_timeseries.png", bbox_inches ="tight")
 
 # Create timeseries for oximetry codes broken down by age group
 for code in codes_of_interest:
     code_specific_analysis(code, 'age_group', population_df, oximetry_codes_dict)
     plt.title('\n'.join(wrap('Patients with \"' + oximetry_codes_dict[int(code)] + '\" code,\n grouped by ' + 'age')), fontsize = 40)
-    plt.savefig("output/timeseries/plot_" + code + "_" + "age_group" + "_timeseries.png", bbox_inches ="tight")
+    plt.savefig("output/plot_" + code + "_" + "age_group" + "_timeseries.png", bbox_inches ="tight")
 
 # Create timeseries for oximetry codes broken down by shielding status
 for code in codes_of_interest:
@@ -94,4 +94,4 @@ for code in codes_of_interest:
         legend_labels[i] = new_labels[legend_labels[i]]
     plt.legend(legend_labels, loc='upper left', bbox_to_anchor=(1.0, 1.0), fontsize = 20)
     plt.title('\n'.join(wrap('Patients with \"' + oximetry_codes_dict[int(code)] + '\" code,\n grouped by ' + 'shielding status')), fontsize = 40)
-    plt.savefig("output/timeseries/plot_" + code + "_" + "shielding" + "_timeseries.png", bbox_inches ="tight")
+    plt.savefig("output/plot_" + code + "_" + "shielding" + "_timeseries.png", bbox_inches ="tight")
