@@ -29,6 +29,18 @@
       "url": "https://codelists.opensafely.org/codelist/opensafely/nhs-england-care-homes-residential-status/3712ef13/",
       "downloaded_at": "2022-03-01 10:07:18.649571Z",
       "sha": "357b2af4841e574f7d43bfeff143b39cdfed6997"
+    },
+    "opensafely-ethnicity.csv": {
+      "id": "opensafely/ethnicity/2020-04-27",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/ethnicity/2020-04-27/",
+      "downloaded_at": "2022-04-22 11:12:54.391696Z",
+      "sha": "3d2f3998b71863a80b24d60f6f4282e14191ae13"
+    },
+    "primis-covid19-vacc-uptake-eth2001.csv": {
+      "id": "primis-covid19-vacc-uptake/eth2001/v1",
+      "url": "https://codelists.opensafely.org/codelist/primis-covid19-vacc-uptake/eth2001/v1/",
+      "downloaded_at": "2022-04-22 16:05:12.007451Z",
+      "sha": "36e4eacba898e6ec72da8ff66e8c673bfd9aa8e4"
     }
   }
 }
