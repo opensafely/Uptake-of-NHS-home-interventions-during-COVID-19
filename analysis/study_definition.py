@@ -2,7 +2,13 @@
 from cohortextractor import StudyDefinition, patients
 
 # Import codelist
-from codelist import pulse_oximetry_codes, shielding_list, covid_vaccine_1_EMIS_codes, covid_vaccine_2_EMIS_codes, care_home_codes
+from codelist import (
+    pulse_oximetry_codes,
+    shielding_list,
+    covid_vaccine_1_EMIS_codes,
+    covid_vaccine_2_EMIS_codes,
+    care_home_codes,
+)
 
 from data_processing import loop_over_codes
 
@@ -56,14 +62,33 @@ study = StudyDefinition(
         returning="binary_flag",
         return_expectations={"incidence": 0.25},
     ),
-    # index_of_multiple_deprivation
-    index_of_multiple_deprivation=patients.address_as_of(
-        date="index_date",
-        returning="index_of_multiple_deprivation",
-        round_to_nearest=100,
+    # IMD quintile
+    imd=patients.categorised_as(
+        {
+            "Not known": "DEFAULT",
+            "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
+            "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
+            "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
+            "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
+            "5": """index_of_multiple_deprivation >= 32844*4/5 """,
+        },
+        index_of_multiple_deprivation=patients.address_as_of(
+            date="index_date",
+            returning="index_of_multiple_deprivation",
+            round_to_nearest=100,
+        ),
         return_expectations={
             "rate": "universal",
-            "category": {"ratios": {"100": 0.1, "200": 0.2, "300": 0.7}},
+            "category": {
+                "ratios": {
+                    "Not known": 0.01,
+                    "1": 0.10,
+                    "2": 0.20,
+                    "3": 0.20,
+                    "4": 0.30,
+                    "5": 0.19,
+                }
+            },
         },
     ),
     # rural_urban_classification
@@ -90,7 +115,8 @@ study = StudyDefinition(
                     "West Midlands": 0.1,
                     "East of England": 0.1,
                     "London": 0.2,
-                    "South East": 0.2,
+                    "South East": 0.1,
+                    "South West": 0.1,
                 },
             },
         },

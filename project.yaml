@@ -6,7 +6,7 @@ expectations:
 actions:
 
   generate_study_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-04-01 to 2022-03-15 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2021-11-01 to 2021-12-28 by week"
     outputs:
       highly_sensitive:
         cohort: output/input_*.csv
@@ -19,44 +19,22 @@ actions:
         table_1_oximetry_counts: output/table_1_oximetry_counts.csv
         plot_1_oximetry_timeseries: output/plot_1_oximetry_timeseries.png
 
+  generate_oximetry_regional_timeseries:
+    run: python:latest python analysis/analysis_region.py
+    needs: [generate_study_population]
+    outputs:
+      moderately_sensitive:
+        table_oximetry_counts_region: output/table_oximetry_counts_*.csv
+        plot_oximetry_timeseries_region: output/plot_oximetry_timeseries_region_*.png
+
   generate_timeseries_breakdowns:
     run: python:latest python analysis/analysis2.py
     needs: [generate_study_population]
     outputs:
       moderately_sensitive:
-        table_1325191000000108_age_group_counts: output/table_1325191000000108_age_group_counts.csv
-        plot_1325191000000108_age_group_timeseries: output/plot_1325191000000108_age_group_timeseries.png
-        table_1325221000000101_age_group_counts: output/table_1325221000000101_age_group_counts.csv
-        plot_1325221000000101_age_group_timeseries: output/plot_1325221000000101_age_group_timeseries.png
-        table_1325241000000108_age_group_counts: output/table_1325241000000108_age_group_counts.csv
-        plot_1325241000000108_age_group_timeseries: output/plot_1325241000000108_age_group_timeseries.png
-        table_1325191000000108_shielding_counts: output/table_1325191000000108_shielding_counts.csv
-        plot_1325191000000108_shielding_timeseries: output/plot_1325191000000108_shielding_timeseries.png
-        table_1325221000000101_shielding_counts: output/table_1325221000000101_shielding_counts.csv
-        plot_1325221000000101_shielding_timeseries: output/plot_1325221000000101_shielding_timeseries.png
-        table_1325241000000108_shielding_counts: output/table_1325241000000108_shielding_counts.csv
-        plot_1325241000000108_shielding_timeseries: output/plot_1325241000000108_shielding_timeseries.png
-        table_1325191000000108_sex_counts: output/table_1325191000000108_sex_counts.csv
-        plot_1325191000000108_sex_timeseries: output/plot_1325191000000108_sex_timeseries.png
-        table_1325221000000101_sex_counts: output/table_1325221000000101_sex_counts.csv
-        plot_1325221000000101_sex_timeseries: output/plot_1325221000000101_sex_timeseries.png
-        table_1325241000000108_sex_counts: output/table_1325241000000108_sex_counts.csv
-        plot_1325241000000108_sex_timeseries: output/plot_1325241000000108_sex_timeseries.png
-        table_1325191000000108_care_home_counts: output/table_1325191000000108_care_home_counts.csv
-        plot_1325191000000108_care_home_timeseries: output/plot_1325191000000108_care_home_timeseries.png
-        table_1325221000000101_care_home_counts: output/table_1325221000000101_care_home_counts.csv
-        plot_1325221000000101_care_home_timeseries: output/plot_1325221000000101_care_home_timeseries.png
-        table_1325241000000108_care_home_counts: output/table_1325241000000108_care_home_counts.csv
-        plot_1325241000000108_care_home_timeseries: output/plot_1325241000000108_care_home_timeseries.png
-        table_1325191000000108_ethnicity_6_sus_counts: output/table_1325191000000108_ethnicity_6_sus_counts.csv
-        plot_1325191000000108_ethnicity_6_sus_timeseries: output/plot_1325191000000108_ethnicity_6_sus_timeseries.png
-        table_1325221000000101_ethnicity_6_sus_counts: output/table_1325221000000101_ethnicity_6_sus_counts.csv
-        plot_1325221000000101_ethnicity_6_sus_timeseries: output/plot_1325221000000101_ethnicity_6_sus_timeseries.png
-        table_1325241000000108_ethnicity_6_sus_counts: output/table_1325241000000108_ethnicity_6_sus_counts.csv
-        plot_1325241000000108_ethnicity_6_sus_timeseries: output/plot_1325241000000108_ethnicity_6_sus_timeseries.png
-        table_1325191000000108_IMD_decile_counts: output/table_1325191000000108_IMD_decile_counts.csv
-        plot_1325191000000108_IMD_decile_timeseries: output/plot_1325191000000108_IMD_decile_timeseries.png
-        table_1325221000000101_IMD_decile_counts: output/table_1325221000000101_IMD_decile_counts.csv
-        plot_1325221000000101_IMD_decile_timeseries: output/plot_1325221000000101_IMD_decile_timeseries.png
-        table_1325241000000108_IMD_decile_counts: output/table_1325241000000108_IMD_decile_counts.csv
-        plot_1325241000000108_IMD_decile_timeseries: output/plot_1325241000000108_IMD_decile_timeseries.png
+        table_1325191000000108_counts: output/table_1325191000000108_*.csv
+        plot_1325191000000108_timeseries: output/plot_1325191000000108_*.png
+        table_1325221000000101_counts: output/table_1325221000000101_*.csv
+        plot_1325221000000101_timeseries: output/plot_1325221000000101_*.png
+        table_1325241000000108_counts: output/table_1325241000000108_*.csv
+        plot_1325241000000108_timeseries: output/plot_1325241000000108_*.png
