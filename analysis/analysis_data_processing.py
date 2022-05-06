@@ -67,10 +67,10 @@ def redact_and_round_column(column: pd.Series) -> pd.Series:
 
 
 def redact_to_five_and_round(counts_df: pd.DataFrame, column_name: str) -> pd.DataFrame:
-    '''Function which determines for each index date if any value in a dataframe column
-        is <= 5 and if so redacts all values <=5 then continues redacting the next lowest
-        value until the redacted values add up to >= 5.
-        All remaining values are then rounded up to nearest 5 '''
+    """Function which determines for each index date if any value in a dataframe column
+    is <= 5 and if so redacts all values <=5 then continues redacting the next lowest
+    value until the redacted values add up to >= 5.
+    All remaining values are then rounded up to nearest 5"""
     # For each index date
     for index_date in counts_df.index_date.unique():
         # Create temporary dataframe of all the rows with that index date
@@ -78,10 +78,17 @@ def redact_to_five_and_round(counts_df: pd.DataFrame, column_name: str) -> pd.Da
         # If sum of values in the column <= 5
         if pd.to_numeric(temp_df[column_name], errors="coerce").sum() <= 5:
             # Redact all values in the column
-            temp_df[column_name] = '[REDACTED]'
+            temp_df[column_name] = "[REDACTED]"
         # Else if there are any numbers <= 5 in the column of interest
-        elif pd.to_numeric(temp_df[column_name][pd.to_numeric(temp_df[column_name], errors = 'coerce') <= 5],
-                           errors="coerce").count() > 0:
+        elif (
+            pd.to_numeric(
+                temp_df[column_name][
+                    pd.to_numeric(temp_df[column_name], errors="coerce") <= 5
+                ],
+                errors="coerce",
+            ).count()
+            > 0
+        ):
             # Store total quantity redacted
             total_redacted = 0
             # For each row
@@ -91,7 +98,7 @@ def redact_to_five_and_round(counts_df: pd.DataFrame, column_name: str) -> pd.Da
                     # Add to the total_redacted variable
                     total_redacted += temp_df.loc[index, column_name]
                     # Redact the value
-                    temp_df.loc[index, column_name] = '[REDACTED]'
+                    temp_df.loc[index, column_name] = "[REDACTED]"
                     # While total_redacted <= 5
                     while total_redacted <= 5:
                         # Find index of the lowest non-redacted count for that index date
@@ -160,11 +167,33 @@ def further_redaction(counts_df: pd.DataFrame, column_name: str) -> pd.DataFrame
     return counts_df
 
 
-# Function to take a pulse oximetry code and save the timeseries and its
-# underlying table, grouped by a specific column
-def code_specific_analysis(
-    code: str, column_name: str, population_df: pd.DataFrame, oximetry_codes_dict: dict
+def produce_plot(
+    df: pd.DataFrame,
+    title: str = None,
+    x_label: str = None,
+    y_label: str = None,
+    figure_size=(20, 10),
 ):
+    """Function to produce plot of all dataframe columns"""
+    # df.set_index("index_date", inplace=True)
+    fig, ax = plt.subplots(figsize=figure_size)
+    df.replace(["[REDACTED]"], np.nan).plot(ax=ax)
+    plt.legend(loc="upper left", bbox_to_anchor=(1.0, 1.0), fontsize=20)
+    plt.xlabel(x_label, fontsize=20)
+    plt.ylabel(y_label, fontsize=20)
+    plt.title("\n".join(wrap(title)), fontsize=40)
+
+
+
+def code_specific_analysis(
+    code: str,
+    column_name: str,
+    population_df: pd.DataFrame,
+    oximetry_codes_dict: dict,
+    variable_title: str = None,
+):
+    '''Function to take a pulse oximetry code and save the timeseries and 
+    its underlying table, grouped by a specific column'''
     # Population of interest is all patients with the code
     codes_df = population_df.loc[population_df["pulse_oximetry_" + code] == 1]
     # Count the number of patients in each age group for each index date
@@ -176,10 +205,7 @@ def code_specific_analysis(
         (codes_df.groupby("index_date").size()).to_dict()
     )
     # # Apply redacting and rounding to the counts
-    # counts_df["counts"] = redact_and_round_column(counts_df["counts"])
-    # # Redact counts for any week where at least one count has been redacted
-    # counts_df = further_redaction(counts_df, "counts")
-    counts_df = redact_to_five_and_round(counts_df, 'counts')
+    counts_df = redact_to_five_and_round(counts_df, "counts")
     # Exclude denominators which are less than 100 (higher variation will make
     # timeseries less meaningful)
     counts_df["denominators"] = np.where(
@@ -194,36 +220,36 @@ def code_specific_analysis(
         1,
     )
 
-    #Save the dataframe in outputs folder
+    # Save the dataframe in outputs folder
     counts_df.to_csv("output/table_" + code + "_" + column_name + "_counts.csv")
 
-    # Plot the counts over time (pivot to create separate columns for each
-    # grouping)
-    counts_df.pivot(index="index_date", columns=column_name, values="percentage").plot(
-        figsize=(20, 10), fontsize=20
-    ).get_figure()
-    plt.legend(loc="upper left", bbox_to_anchor=(1.0, 1.0), fontsize=20)
-    plt.xlabel("Date", fontsize=25)
-    plt.ylabel("Percentage of patients", fontsize=25)
-    plt.title(
-        "\n".join(
-            wrap(
-                'Patients with "'
-                + oximetry_codes_dict[int(code)]
-                + '" code,\n grouped by '
-                + column_name
-            )
-        ),
-        fontsize=40,
+    # Plot the counts over time
+    # (pivot to create separate columns for each grouping)
+    # if group_for_plot_title is None:
+    #     group_for_plot_title = column_name
+    plot_title = (
+        'Patients with "'
+        + oximetry_codes_dict[int(code)]
+        + '" code, \ngrouped by '
+        + variable_title
+    )
+    pivot_df = counts_df.pivot(
+        index="index_date", columns=column_name, values="percentage"
+    )
+    produce_plot(pivot_df, plot_title, "Date", "Percentage of patients")
+    plt.savefig(
+        "output/plot_" + code + "_" + column_name + "_timeseries.png",
+        bbox_inches="tight",
     )
 
 
 # Create dictionary of oximetry codes: keys are SNOMED codes, values are the
 # terms they refer to
-oximetry_codes_df = pd.read_csv('codelists/opensafely-pulse-oximetry.csv')
+oximetry_codes_df = pd.read_csv("codelists/opensafely-pulse-oximetry.csv")
 oximetry_codes_dict = oximetry_codes_df.set_index("code")["term"].to_dict()
 # Create dictionary of oximetry headers:
 # Keys are oximetry headers in input csv files (i.e. pulse_oximetry_code),
 # values are the terms they refer to
-oximetry_headers_dict = {f"pulse_oximetry_{k}":v for k,v in
-                         oximetry_codes_dict.items()}
+oximetry_headers_dict = {
+    f"pulse_oximetry_{k}": v for k, v in oximetry_codes_dict.items()
+}

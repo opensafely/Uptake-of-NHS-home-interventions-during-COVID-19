@@ -1,4 +1,6 @@
-# Script to create times series plot for breakdowns by age category, shielding status, sex, IMD decile, ethnicity and care home residency
+# Script to create times series plot for breakdowns by
+# age category, shielding status, sex, IMD decile, ethnicity,
+# care home residency and age_plus_shielding_status
 
 import os
 import pandas as pd
@@ -18,7 +20,8 @@ from analysis_data_processing import (
     code_specific_analysis,
     oximetry_codes_dict,
     further_redaction_all,
-    redact_to_five_and_round
+    redact_to_five_and_round,
+    produce_plot,
 )
 
 
@@ -61,131 +64,38 @@ population_df["age_and_shielding"] = np.select(
     conditionlist, choicelist, default="Not Specified"
 )
 
+# Replace binary flags with meaningful values
+population_df["care_home"] = population_df["care_home"].replace(
+    to_replace=[1, 0], value=["Care home resident", "Not a care home resident"]
+)
+population_df["sex"] = population_df["sex"].replace(
+    to_replace=["M", "F"], value=["Male", "Female"]
+)
+population_df["shielding"] = population_df["shielding"].replace(
+    to_replace=[1, 0], value=["Shielding", "Not shielding"]
+)
 
-# Create timeseries for each of the variables
 
 # Define which oximetry codes to create timeseries breakdowns for
 codes_of_interest = ["1325191000000108", "1325221000000101", "1325241000000108"]
+# Define variables of interest and corresponding plot titles
+variable_and_title = {
+    "sex": "sex",
+    "care_home": "care home residency",
+    "shielding": "shielding status",
+    "age_group": "age",
+    "ethnicity": "ethnicity",
+    "imd_quintile": "IMD quintile (1 = most deprived, 5 = least deprived)",
+}
 
-# Create timeseries for oximetry codes broken down by sex
+# Create timeseries for oximetry codes broken down by the variables of interest
 for code in codes_of_interest:
-    code_specific_analysis(code, "sex", population_df, oximetry_codes_dict)
-    legend_handles, legend_labels = plt.gca().get_legend_handles_labels()
-    new_labels = {"F": "Female", "M": "Male"}
-    for i in range(0, len(legend_labels)):
-        legend_labels[i] = new_labels[legend_labels[i]]
-    plt.legend(legend_labels, loc="upper left", bbox_to_anchor=(1.0, 1.0), fontsize=20)
-    plt.savefig(
-        "output/plot_" + code + "_" + "sex" + "_timeseries.png", bbox_inches="tight"
-    )
+    for key, value in variable_and_title.items():
+        code_specific_analysis(code, key, population_df, oximetry_codes_dict, value)
 
-# Create timeseries for oximetry codes broken down by care_home
-for code in codes_of_interest:
-    code_specific_analysis(code, "care_home", population_df, oximetry_codes_dict)
-    legend_handles, legend_labels = plt.gca().get_legend_handles_labels()
-    new_labels = {"0": "Not a care home resident", "1": "Care home resident"}
-    for i in range(0, len(legend_labels)):
-        legend_labels[i] = new_labels[str(round(float(legend_labels[i])))]
-    plt.legend(legend_labels, loc="upper left", bbox_to_anchor=(1.0, 1.0), fontsize=20)
-    plt.title(
-        "\n".join(
-            wrap(
-                'Patients with "'
-                + oximetry_codes_dict[int(code)]
-                + '" code,\n grouped by '
-                + "care home residency"
-            )
-        ),
-        fontsize=40,
-    )
-    plt.savefig(
-        "output/plot_" + code + "_" + "care_home" + "_timeseries.png",
-        bbox_inches="tight",
-    )
-
-# Create timeseries for oximetry codes broken down by ethnicity_6_sus
-for code in codes_of_interest:
-    code_specific_analysis(code, "ethnicity_6_sus", population_df, oximetry_codes_dict)
-    plt.title(
-        "\n".join(
-            wrap(
-                'Patients with "'
-                + oximetry_codes_dict[int(code)]
-                + '" code,\n grouped by '
-                + "ethnicity"
-            )
-        ),
-        fontsize=40,
-    )
-    plt.savefig(
-        "output/plot_" + code + "_" + "ethnicity_6_sus" + "_timeseries.png",
-        bbox_inches="tight",
-    )
-
-# Create timeseries for oximetry codes broken down by IMD
-for code in codes_of_interest:
-    imd_df = population_df[population_df["imd"] != "Not known"]
-    code_specific_analysis(code, "imd", imd_df, oximetry_codes_dict)
-    plt.title(
-        "\n".join(
-            wrap(
-                'Patients with "'
-                + oximetry_codes_dict[int(code)]
-                + '" code,\n grouped by '
-                + "IMD quintile (1 = most deprived, 5 = least deprived)"
-            )
-        ),
-        fontsize=40,
-    )
-    plt.savefig(
-        "output/plot_" + code + "_" + "IMD_quintile" + "_timeseries.png",
-        bbox_inches="tight",
-    )
-
-# Create timeseries for oximetry codes broken down by age group
-for code in codes_of_interest:
-    code_specific_analysis(code, "age_group", population_df, oximetry_codes_dict)
-    plt.title(
-        "\n".join(
-            wrap(
-                'Patients with "'
-                + oximetry_codes_dict[int(code)]
-                + '" code,\n grouped by '
-                + "age"
-            )
-        ),
-        fontsize=40,
-    )
-    plt.savefig(
-        "output/plot_" + code + "_" + "age_group" + "_timeseries.png",
-        bbox_inches="tight",
-    )
-
-# Create timeseries for oximetry codes broken down by shielding status
-for code in codes_of_interest:
-    code_specific_analysis(code, "shielding", population_df, oximetry_codes_dict)
-    legend_handles, legend_labels = plt.gca().get_legend_handles_labels()
-    new_labels = {"0": "Not shielding", "1": "Shielding"}
-    for i in range(0, len(legend_labels)):
-        legend_labels[i] = new_labels[str(round(float(legend_labels[i])))]
-    plt.legend(legend_labels, loc="upper left", bbox_to_anchor=(1.0, 1.0), fontsize=20)
-    plt.title(
-        "\n".join(
-            wrap(
-                'Patients with "'
-                + oximetry_codes_dict[int(code)]
-                + '" code,\n grouped by '
-                + "shielding status"
-            )
-        ),
-        fontsize=40,
-    )
-    plt.savefig(
-        "output/plot_" + code + "_" + "shielding" + "_timeseries.png",
-        bbox_inches="tight",
-    )
 
 # Create timeseries for oximetry codes broken down by age and shielding status
+
 for code in codes_of_interest:
     # Population of interest is all patients with the code
     codes_df = population_df.loc[population_df["pulse_oximetry_" + code] == 1]
@@ -242,11 +152,18 @@ for code in codes_of_interest:
     # Save the dataframe in outputs folder
     counts_df.to_csv("output/table_" + code + "_age_and_shielding_counts.csv")
     # Create timeseries plot
-    counts_df.pivot(
+    pivot_df = counts_df.pivot(
         index="index_date",
         columns="cumulative_labels",
         values="cumulative_age_and_shielding",
-    ).plot(figsize=(20, 10), fontsize=20).get_figure()
+    )
+    plot_title = (
+        'Patients with "'
+        + oximetry_codes_dict[int(code)]
+        + '" code, grouped by '
+        + "age and shielding status"
+    )
+    produce_plot(pivot_df, plot_title)
     # Reorder legend labels to match cumulative order
     handles, labels = plt.gca().get_legend_handles_labels()
     order = [0, 2, 3, 1]
@@ -257,20 +174,6 @@ for code in codes_of_interest:
         loc="upper left",
         bbox_to_anchor=(1.0, 1.0),
         fontsize=20,
-    )
-    # Add axis labels and title
-    plt.xlabel("Date", fontsize=25)
-    plt.ylabel("Percentage of patients", fontsize=25)
-    plt.title(
-        "\n".join(
-            wrap(
-                'Patients with "'
-                + oximetry_codes_dict[int(code)]
-                + '" code,\n grouped by '
-                + "age group and shielding status"
-            )
-        ),
-        fontsize=40,
     )
     plt.savefig(
         "output/plot_" + code + "_" + "age_and_shielding" + "_timeseries.png",
