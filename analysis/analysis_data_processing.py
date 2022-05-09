@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 from textwrap import wrap
 
 
-# Create population data frame which includes all weeks and dictionary of
-# cohort size for each individual week
 def create_population_df(dir: str = "../output/") -> Tuple[pd.DataFrame, dict]:
+    """Function to create population data frame which includes all weeks and
+    create a dictionary of cohort size for each individual week"""
     # find the input csv files
     filepaths = [
         f for f in os.listdir(dir) if (f.startswith("input") and f.endswith(".csv"))
@@ -44,10 +44,9 @@ def create_population_df(dir: str = "../output/") -> Tuple[pd.DataFrame, dict]:
     return population_df, cohort_size
 
 
-# Helper function for redact_and_round_df
-# Takes a column of data, redacts any values less than or equal to 5 and
-# rounds all other values up to nearest 5
 def redact_and_round_column(column: pd.Series) -> pd.Series:
+    """Function which takes a column of data, redacts any values less than or
+    equal to 5 and rounds all other values up to nearest 5"""
     # New column variable will contain the new values with any necessary
     # redacting and rounding applied
     new_column = []
@@ -128,9 +127,10 @@ def redact_and_round_df(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-# Takes a dataframe countaining a column of counts and redacts all counts for
-# an index date if any one of the counts for that date is already redacted
 def further_redaction_all(counts_df: pd.DataFrame, column_name: str) -> pd.DataFrame:
+    """Function which takes a dataframe countaining a column of counts and
+    redacts all counts for an index date if any one of the counts for that
+    date is already redacted"""
     # For  each row of the dataframe
     for index, row in counts_df.iterrows():
         # If count redacted
@@ -144,10 +144,10 @@ def further_redaction_all(counts_df: pd.DataFrame, column_name: str) -> pd.DataF
     return counts_df
 
 
-# Takes dataframe and redacts smallest remaining value in a column for each
-# index date, if one value in that column is already redacted for that index
-# date
 def further_redaction(counts_df: pd.DataFrame, column_name: str) -> pd.DataFrame:
+    """Function which takes a dataframe and redacts smallest remaining value
+    in a column for each index date, if one value in that column is already
+    redacted for that index date"""
     # For each index date
     for index_date in counts_df.index_date.unique():
         # Create temporary dataframe of all the rows with that index date
@@ -175,14 +175,12 @@ def produce_plot(
     figure_size=(20, 10),
 ):
     """Function to produce plot of all dataframe columns"""
-    # df.set_index("index_date", inplace=True)
     fig, ax = plt.subplots(figsize=figure_size)
     df.replace(["[REDACTED]"], np.nan).plot(ax=ax)
     plt.legend(loc="upper left", bbox_to_anchor=(1.0, 1.0), fontsize=20)
     plt.xlabel(x_label, fontsize=20)
     plt.ylabel(y_label, fontsize=20)
     plt.title("\n".join(wrap(title)), fontsize=40)
-
 
 
 def code_specific_analysis(
@@ -192,8 +190,8 @@ def code_specific_analysis(
     oximetry_codes_dict: dict,
     variable_title: str = None,
 ):
-    '''Function to take a pulse oximetry code and save the timeseries and 
-    its underlying table, grouped by a specific column'''
+    """Function to take a pulse oximetry code and save the timeseries and
+    its underlying table, grouped by a specific column"""
     # Population of interest is all patients with the code
     codes_df = population_df.loc[population_df["pulse_oximetry_" + code] == 1]
     # Count the number of patients in each age group for each index date
@@ -225,8 +223,6 @@ def code_specific_analysis(
 
     # Plot the counts over time
     # (pivot to create separate columns for each grouping)
-    # if group_for_plot_title is None:
-    #     group_for_plot_title = column_name
     plot_title = (
         'Patients with "'
         + oximetry_codes_dict[int(code)]
@@ -243,8 +239,8 @@ def code_specific_analysis(
     )
 
 
-# Create dictionary of oximetry codes: keys are SNOMED codes, values are the
-# terms they refer to
+# Create dictionary of oximetry codes:
+# Keys are SNOMED codes, values are the terms they refer to
 oximetry_codes_df = pd.read_csv("codelists/opensafely-pulse-oximetry.csv")
 oximetry_codes_dict = oximetry_codes_df.set_index("code")["term"].to_dict()
 # Create dictionary of oximetry headers:

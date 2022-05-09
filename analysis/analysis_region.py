@@ -1,4 +1,3 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import sys
 
@@ -6,8 +5,6 @@ if "." not in sys.path:
     sys.path.insert(0, ".")
 from analysis_data_processing import (
     create_population_df,
-    redact_and_round_df,
-    further_redaction,
     oximetry_headers_dict,
     redact_to_five_and_round,
     produce_plot,

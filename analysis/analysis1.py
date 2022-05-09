@@ -8,12 +8,12 @@ if "." not in sys.path:
     sys.path.insert(0, ".")
 from analysis_data_processing import (
     create_population_df,
-    redact_and_round_column,
     redact_and_round_df,
     produce_plot,
 )
 
-# Create population data frame which includes all weeks and dictionary of cohort size for each individual week
+# Create population data frame which includes all weeks and dictionary of
+# cohort size for each individual week
 population_df, cohort_size = create_population_df("output/")
 
 # Create lists of current and required headers
@@ -37,7 +37,8 @@ oximetry_sum = population_df.groupby(["index_date"], as_index=False)[
 ].sum()
 # Rename oximetry headers in oximetry sums data frame
 oximetry_sum.rename(columns=oximetry_dictionary, inplace=True)
-# Redact values less than or equal to 5 and round all other values up to nearest 5
+# Redact values less than or equal to 5 and round all other values up to
+# nearest 5
 oximetry_sum = redact_and_round_df(oximetry_sum)
 
 # Save the dataframe in outputs folder

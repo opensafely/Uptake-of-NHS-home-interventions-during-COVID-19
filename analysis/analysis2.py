@@ -2,13 +2,9 @@
 # age category, shielding status, sex, IMD decile, ethnicity,
 # care home residency and age_plus_shielding_status
 
-import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from typing import Tuple
-import math
-from textwrap import wrap
 import sys
 
 if "." not in sys.path:
@@ -16,36 +12,39 @@ if "." not in sys.path:
 from analysis_data_processing import (
     create_population_df,
     redact_and_round_column,
-    redact_and_round_df,
     code_specific_analysis,
     oximetry_codes_dict,
     further_redaction_all,
-    redact_to_five_and_round,
     produce_plot,
 )
 
 
-# Create population data frame which includes all weeks and dictionary of cohort size for each individual week
+# Create population data frame which includes all weeks and dictionary of
+# cohort size for each individual week
 population_df, cohort_size = create_population_df("output/")
 
 # Define the ranges for each of the age categories
-# (e.g. [-1, 39] will find ages such that -1<age<=39 - age is a whole number in the data frame so this is anyone aged 0 to 40 inclusive)
+# (e.g. [-1, 39] will find ages such that -1<age<=39 - age is a whole number
+# in the data frame so this is anyone aged 0 to 40 inclusive)
 age_bins = [-1, 39, 49, 64, 200]
 n = len(age_bins)
 
 # Create list of labels for the different age groups
 age_group_labels = []
-# For all except the last final age category the label is 'Age between ... and ...'
+# For all except the last final age category the label is
+# 'Age between ... and ...'
 for i in range(0, len(age_bins) - 2):
     age_group_labels.append(f"Age between {age_bins[i]+1} and {age_bins[i+1]+1}")
 # For final age category the label is 'Age ... or over'
 age_group_labels.append(f"Age {age_bins[-2]+1} or over")
 
-# Create list of age category for each patient and insert into the population data frame
+# Create list of age category for each patient and insert into the population
+# data frame
 age_category = pd.cut(population_df.age, bins=age_bins, labels=age_group_labels)
 population_df.insert(0, "age_group", age_category)
 
-# Add column to population data frame for combined age group and shielding status
+# Add column to population data frame for combined age group and shielding
+# status
 conditionlist = [
     (population_df["shielding"] == 1),
     (population_df["shielding"] == 0) & (population_df["age"] >= 65),
@@ -99,7 +98,8 @@ for code in codes_of_interest:
 for code in codes_of_interest:
     # Population of interest is all patients with the code
     codes_df = population_df.loc[population_df["pulse_oximetry_" + code] == 1]
-    # Count the number of patients in each age_and_shielding group for each index date
+    # Count the number of patients in each age_and_shielding group for each
+    # index date
     counts_df = (
         codes_df.groupby(["index_date", "age_and_shielding"]).size().reset_index()
     )
