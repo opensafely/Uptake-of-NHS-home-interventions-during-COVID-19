@@ -205,6 +205,7 @@ def code_specific_analysis(
     """Function to take a pulse oximetry code and save the timeseries and
     its underlying table, grouped by a specific column"""
     term = codes_dict[int(code)]
+    print('Term is ' + term)
     # Population of interest is all patients with the code
     codes_df = population_df.loc[population_df[term] == 1]
     # Count the number of patients in each age group for each index date
@@ -276,14 +277,10 @@ def homecare_title(homecare_type):
 # Keys are SNOMED codes, values are the terms they refer to
 oximetry_codes_df = pd.read_csv("codelists/opensafely-pulse-oximetry.csv")
 oximetry_codes_dict = oximetry_codes_df.set_index("code")["term"].to_dict()
-# bp_codes_df = pd.read_csv("codelists/blood-pressure.csv")
-# bp_codes_dict = bp_codes_df.set_index("code")["term"].to_dict()
-# proactive_codes_df = pd.read_csv("codelists/proactive-care.csv")
-# proactive_codes_dict = proactive_codes_df.set_index("code")["term"].to_dict()
 bp_codes_dict = {
     413606001: "Average home systolic blood pressure",
     314446007: "Average day interval systolic blood pressure",
-    413605002: ",Average home diastolic blood pressure",
+    413605002: "Average home diastolic blood pressure",
     314461008: "Average day interval diastolic blood pressure",
 }
 proactive_codes_dict = {934231000000106: "Provision of proactive care"}

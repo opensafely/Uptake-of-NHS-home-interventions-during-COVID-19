@@ -11,13 +11,11 @@ pulse_oximetry_codes = codelist_from_csv(
 )
 
 # Blood pressure codes
-bp_codes = codelist(
-    list(str(bp_codes_dict.keys())), system="snomed"
-)
+bp_codes = codelist([str(x) for x in list(bp_codes_dict.keys())], system="snomed")
 
 # Proactive care code
 proactive_codes = codelist(
-    list(str(proactive_codes_dict.keys())), system="snomed"
+    [str(x) for x in list(proactive_codes_dict.keys())], system="snomed"
 )
 
 # Shielding list codes from OpenCodelists
@@ -27,7 +25,9 @@ shielding_list = codelist_from_csv(
 
 # Care home list
 care_home_codes = codelist_from_csv(
-    "codelists/opensafely-nhs-england-care-homes-residential-status.csv", system="snomed", column="code"
+    "codelists/opensafely-nhs-england-care-homes-residential-status.csv",
+    system="snomed",
+    column="code",
 )
 
 # COVID vaccination administration in EMIS
@@ -53,5 +53,8 @@ ethnicity_codelist = codelist_from_csv(
 )
 # Alternative - use opensafely ethnicity list
 ethnicity_codes = codelist_from_csv(
-    "codelists/opensafely-ethnicity.csv", system="ctv3", column="Code", category_column="Grouping_6",
+    "codelists/opensafely-ethnicity.csv",
+    system="ctv3",
+    column="Code",
+    category_column="Grouping_6",
 )
