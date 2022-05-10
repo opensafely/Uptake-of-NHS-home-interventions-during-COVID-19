@@ -7,12 +7,17 @@ import matplotlib.pyplot as plt
 from textwrap import wrap
 
 
-def create_population_df(dir: str = "../output/") -> Tuple[pd.DataFrame, dict]:
-    """Function to create population data frame which includes all weeks and
-    create a dictionary of cohort size for each individual week"""
+def create_population_df(
+    homecare_type: str, dir: str = "output/"
+) -> Tuple[pd.DataFrame, dict]:
+    """Function to create population data frame for a particular homecare type
+    which includes all weeks and create a dictionary of cohort size for each
+    individual week"""
     # find the input csv files
     filepaths = [
-        f for f in os.listdir(dir) if (f.startswith("input") and f.endswith(".csv"))
+        f
+        for f in os.listdir(dir)
+        if (f.startswith(f"input_{homecare_type}") and f.endswith(".csv"))
     ]
     # append the directory path to filename
     filepaths_dir = [dir + filepath for filepath in filepaths]
@@ -28,7 +33,7 @@ def create_population_df(dir: str = "../output/") -> Tuple[pd.DataFrame, dict]:
         output = pd.read_csv(file)
         # Get the index date from the filename
         index_date = pd.to_datetime(
-            file.split("_",)[1].split(
+            file.split("_",)[2].split(
                 ".csv"
             )[0],
             dayfirst=True,
@@ -41,6 +46,12 @@ def create_population_df(dir: str = "../output/") -> Tuple[pd.DataFrame, dict]:
         cohort_size[index_date] = len(output)
     # Combine all the dataframes together
     population_df = pd.concat(dfs)
+    if homecare_type == "oximetry":
+        population_df.rename(columns=oximetry_headers_dict, inplace=True)
+    elif homecare_type == "bp":
+        population_df.rename(columns=bp_headers_dict, inplace=True)
+    elif homecare_type == "proactive":
+        population_df.rename(columns=proactive_headers_dict, inplace=True)
     return population_df, cohort_size
 
 
@@ -118,9 +129,9 @@ def redact_to_five_and_round(counts_df: pd.DataFrame, column_name: str) -> pd.Da
     return counts_df
 
 
-# Funtion to take a dataframe, redact any values less than or equal to 5 and
-# round all other values up to nearest 5
 def redact_and_round_df(df: pd.DataFrame) -> pd.DataFrame:
+    """Function to take a dataframe, redact any values less than or equal to 5 and
+    round all other values up to nearest 5"""
     # Apply redacting and rounding to each column of the dataframe
     for column in df.columns.values:
         df[column] = redact_and_round_column(df[column])
@@ -172,7 +183,7 @@ def produce_plot(
     title: str = None,
     x_label: str = None,
     y_label: str = None,
-    figure_size=(20, 10),
+    figure_size: tuple=(20, 10),
 ):
     """Function to produce plot of all dataframe columns"""
     fig, ax = plt.subplots(figsize=figure_size)
@@ -184,16 +195,18 @@ def produce_plot(
 
 
 def code_specific_analysis(
+    homecare_type: str,
     code: str,
     column_name: str,
     population_df: pd.DataFrame,
-    oximetry_codes_dict: dict,
+    codes_dict: dict,
     variable_title: str = None,
 ):
     """Function to take a pulse oximetry code and save the timeseries and
     its underlying table, grouped by a specific column"""
+    term = codes_dict[int(code)]
     # Population of interest is all patients with the code
-    codes_df = population_df.loc[population_df["pulse_oximetry_" + code] == 1]
+    codes_df = population_df.loc[population_df[term] == 1]
     # Count the number of patients in each age group for each index date
     counts_df = codes_df.groupby(["index_date", column_name]).size().reset_index()
     counts_df.rename(columns={0: "counts"}, inplace=True)
@@ -219,33 +232,75 @@ def code_specific_analysis(
     )
 
     # Save the dataframe in outputs folder
-    counts_df.to_csv("output/table_" + code + "_" + column_name + "_counts.csv")
+    counts_df.to_csv(
+        "output/"
+        + homecare_type
+        + "_table_code_"
+        + code
+        + "_"
+        + column_name
+        + "_counts.csv"
+    )
 
     # Plot the counts over time
     # (pivot to create separate columns for each grouping)
-    plot_title = (
-        'Patients with "'
-        + oximetry_codes_dict[int(code)]
-        + '" code, \ngrouped by '
-        + variable_title
-    )
+    plot_title = 'Patients with "' + term + '" code, \ngrouped by ' + variable_title
     pivot_df = counts_df.pivot(
         index="index_date", columns=column_name, values="percentage"
     )
     produce_plot(pivot_df, plot_title, "Date", "Percentage of patients")
     plt.savefig(
-        "output/plot_" + code + "_" + column_name + "_timeseries.png",
+        "output/"
+        + homecare_type
+        + "_plot_code_"
+        + code
+        + "_"
+        + column_name
+        + "_timeseries.png",
         bbox_inches="tight",
     )
 
 
-# Create dictionary of oximetry codes:
+def homecare_title(homecare_type):
+    """Function to return title for plots based on homecare type"""
+    if homecare_type == "oximetry":
+        title = "Pulse Oximetry Codes"
+    elif homecare_type == "bp":
+        title = "Blood Pressure Monitoring Codes"
+    elif homecare_type == "proactive":
+        title = "Procative Care Code"
+    return title
+
+
+# Create dictionaries of oximetry, blood pressure and proactive care codes:
 # Keys are SNOMED codes, values are the terms they refer to
 oximetry_codes_df = pd.read_csv("codelists/opensafely-pulse-oximetry.csv")
 oximetry_codes_dict = oximetry_codes_df.set_index("code")["term"].to_dict()
-# Create dictionary of oximetry headers:
+bp_codes_df = pd.read_csv("codelists/blood-pressure.csv")
+bp_codes_dict = bp_codes_df.set_index("code")["term"].to_dict()
+proactive_codes_df = pd.read_csv("codelists/proactive-care.csv")
+proactive_codes_dict = proactive_codes_df.set_index("code")["term"].to_dict()
+
+# Create dictionary of oximetry, blood pressure and proactive care headers:
 # Keys are oximetry headers in input csv files (i.e. pulse_oximetry_code),
 # values are the terms they refer to
 oximetry_headers_dict = {
-    f"pulse_oximetry_{k}": v for k, v in oximetry_codes_dict.items()
+    f"healthcare_at_home_{k}": v for k, v in oximetry_codes_dict.items()
 }
+bp_headers_dict = {f"healthcare_at_home_{k}": v for k, v in bp_codes_dict.items()}
+proactive_headers_dict = {
+    f"healthcare_at_home_{k}": v for k, v in proactive_codes_dict.items()
+}
+
+# Create region list
+region_list = [
+    "North East",
+    "North West",
+    "Yorkshire and the Humber",
+    "East Midlands",
+    "West Midlands",
+    "East of England",
+    "London",
+    "South East",
+    "South West",
+]

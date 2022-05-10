@@ -3,12 +3,12 @@ from cohortextractor import StudyDefinition, patients
 
 # Import codelist
 from codelist import (
-    pulse_oximetry_codes,
+    proactive_codes,
     shielding_list,
     covid_vaccine_1_EMIS_codes,
     covid_vaccine_2_EMIS_codes,
     care_home_codes,
-    ethnicity_codelist
+    ethnicity_codelist,
 )
 
 from data_processing import loop_over_codes
@@ -25,8 +25,17 @@ study = StudyDefinition(
         "rate": "uniform",
     },
     # Define population - anyone who recieved at least one pulse_oximetry_code on or after 2019-04-01
-    population=patients.with_these_clinical_events(
-        pulse_oximetry_codes, on_or_after="2019-04-01"
+    population=patients.satisfying(
+        """
+            (has_proactive_code) AND
+            (age > 0 AND age <= 110) AND
+            (imd_quintile > 0) AND
+            (sex = "M" OR sex = "F") AND
+            (region != "")
+        """,
+        has_proactive_code=patients.with_these_clinical_events(
+            proactive_codes, on_or_after="2019-04-01"
+        ),
     ),
     # Sex
     sex=patients.sex(
@@ -44,9 +53,9 @@ study = StudyDefinition(
             "incidence": 1,
         },
     ),
-    # pulse oximetry date
-    # Code to loop over pulse_oximetry to find the first match in the period
-    **loop_over_codes(pulse_oximetry_codes, "index_date"),
+    # proactive care date
+    # Code to loop over proactive_codes to find the first match in the period
+    **loop_over_codes(proactive_codes, "index_date"),
     # shielding
     shielding=patients.with_these_clinical_events(
         shielding_list,
@@ -66,7 +75,7 @@ study = StudyDefinition(
     # IMD quintile
     imd_quintile=patients.categorised_as(
         {
-            "Not known": "DEFAULT",
+            "0": "DEFAULT",
             "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
             "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
             "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
@@ -82,7 +91,7 @@ study = StudyDefinition(
             "rate": "universal",
             "category": {
                 "ratios": {
-                    "Not known": 0.01,
+                    "0": 0.01,
                     "1": 0.10,
                     "2": 0.20,
                     "3": 0.20,

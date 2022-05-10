@@ -4,6 +4,17 @@ from cohortextractor import codelist_from_csv
 pulse_oximetry_codes = codelist_from_csv(
     "codelists/opensafely-pulse-oximetry.csv", system="snomed", column="code"
 )
+
+# Blood pressure codes
+bp_codes = codelist_from_csv(
+    "codelists/blood-pressure.csv", system="snomed", column="code"
+)
+
+# Proactive care code
+proactive_codes = codelist_from_csv(
+    "codelists/proactive-care.csv", system="snomed", column="code"
+)
+
 # Shielding list codes from OpenCodelists
 shielding_list = codelist_from_csv(
     "codelists/primis-covid19-vacc-uptake-shield.csv", system="snomed", column="code"
