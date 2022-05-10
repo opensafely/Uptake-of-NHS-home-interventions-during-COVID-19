@@ -1,4 +1,9 @@
-from cohortextractor import codelist_from_csv
+from cohortextractor import codelist_from_csv, codelist
+import sys
+
+if "." not in sys.path:
+    sys.path.insert(0, ".")
+from analysis_data_processing import bp_codes_dict, proactive_codes_dict
 
 # Pulse oximetry codes from OpenCodelists
 pulse_oximetry_codes = codelist_from_csv(
@@ -6,13 +11,13 @@ pulse_oximetry_codes = codelist_from_csv(
 )
 
 # Blood pressure codes
-bp_codes = codelist_from_csv(
-    "codelists/blood-pressure.csv", system="snomed", column="code"
+bp_codes = codelist(
+    list(str(bp_codes_dict.keys())), system="snomed"
 )
 
 # Proactive care code
-proactive_codes = codelist_from_csv(
-    "codelists/proactive-care.csv", system="snomed", column="code"
+proactive_codes = codelist(
+    list(str(proactive_codes_dict.keys())), system="snomed"
 )
 
 # Shielding list codes from OpenCodelists

@@ -183,7 +183,7 @@ def produce_plot(
     title: str = None,
     x_label: str = None,
     y_label: str = None,
-    figure_size: tuple=(20, 10),
+    figure_size: tuple = (20, 10),
 ):
     """Function to produce plot of all dataframe columns"""
     fig, ax = plt.subplots(figsize=figure_size)
@@ -276,10 +276,18 @@ def homecare_title(homecare_type):
 # Keys are SNOMED codes, values are the terms they refer to
 oximetry_codes_df = pd.read_csv("codelists/opensafely-pulse-oximetry.csv")
 oximetry_codes_dict = oximetry_codes_df.set_index("code")["term"].to_dict()
-bp_codes_df = pd.read_csv("codelists/blood-pressure.csv")
-bp_codes_dict = bp_codes_df.set_index("code")["term"].to_dict()
-proactive_codes_df = pd.read_csv("codelists/proactive-care.csv")
-proactive_codes_dict = proactive_codes_df.set_index("code")["term"].to_dict()
+# bp_codes_df = pd.read_csv("codelists/blood-pressure.csv")
+# bp_codes_dict = bp_codes_df.set_index("code")["term"].to_dict()
+# proactive_codes_df = pd.read_csv("codelists/proactive-care.csv")
+# proactive_codes_dict = proactive_codes_df.set_index("code")["term"].to_dict()
+bp_codes_dict = {
+    413606001: "Average home systolic blood pressure",
+    314446007: "Average day interval systolic blood pressure",
+    413605002: ",Average home diastolic blood pressure",
+    314461008: "Average day interval diastolic blood pressure",
+}
+proactive_codes_dict = {934231000000106: "Provision of proactive care"}
+
 
 # Create dictionary of oximetry, blood pressure and proactive care headers:
 # Keys are oximetry headers in input csv files (i.e. pulse_oximetry_code),
