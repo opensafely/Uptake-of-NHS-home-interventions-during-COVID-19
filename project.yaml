@@ -4,23 +4,93 @@ expectations:
   population_size: 1000
 
 actions:
-  generate_study_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2020-11-01 to 2022-03-15 by week"
+  generate_study_population_oximetry:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_oximetry --index-date-range "2019-04-01 to 2022-05-12 by week"
     outputs:
       highly_sensitive:
-        cohort: output/input_*.csv
+        oximetry_cohort: output/input_oximetry*.csv
+
+  generate_study_population_bp:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_bp --index-date-range "2019-04-01 to 2022-05-12 by week"
+    outputs:
+      highly_sensitive:
+        bp_cohort: output/input_bp*.csv
+
+  generate_study_population_proactive:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_proactive --index-date-range "2019-04-01 to 2022-05-12 by week"
+    outputs:
+      highly_sensitive:
+        proactive_cohort: output/input_proactive*.csv
 
   generate_oximetry_timeseries:
-    run: python:latest python analysis/analysis1.py
-    needs: [generate_study_population]
+    run: python:latest python analysis/analysis_oximetry_timeseries.py
+    needs: [generate_study_population_oximetry]
     outputs:
       moderately_sensitive:
-        table_1_oximetry_counts: output/table_1_oximetry_counts.csv
-        plot_1_oximetry_timeseries: output/plot_1_oximetry_timeseries.png
+        oximetry_table_counts: output/oximetry_table_counts.csv
+        oximetry_plot_timeseries: output/oximetry_plot_timeseries.png
 
-  generate_code_analysis:
-    run: python:latest python analysis/part_2_analysis.py
-    needs: [generate_study_population]
+  generate_oximetry_regional_timeseries:
+    run: python:latest python analysis/analysis_oximetry_region.py
+    needs: [generate_study_population_oximetry]
     outputs:
       moderately_sensitive:
-        table_1_oximetry_counts: output/table_*.csv
+        oximetry_table_counts_region: output/oximetry_table_counts_*.csv
+        oximetry_plot_timeseries_region: output/oximetry_plot_timeseries_region_*.png
+
+  generate_oximetry_breakdowns:
+    run: python:latest python analysis/analysis_oximetry_breakdowns.py
+    needs: [generate_study_population_oximetry]
+    outputs:
+      moderately_sensitive:
+        oximetry_table_breakdowns: output/oximetry_table_code_*.csv
+        oximetry_plot_breakdowns: output/oximetry_plot_code_*.png
+
+  generate_bp_timeseries:
+    run: python:latest python analysis/analysis_bp_timeseries.py
+    needs: [generate_study_population_bp]
+    outputs:
+      moderately_sensitive:
+        bp_table_counts: output/bp_table_counts.csv
+        bp_plot_timeseries: output/bp_plot_timeseries.png
+
+  generate_bp_regional_timeseries:
+    run: python:latest python analysis/analysis_bp_region.py
+    needs: [generate_study_population_bp]
+    outputs:
+      moderately_sensitive:
+        bp_table_counts_region: output/bp_table_counts_*.csv
+        bp_plot_timeseries_region: output/bp_plot_timeseries_region_*.png
+
+  generate_bp_breakdowns:
+    run: python:latest python analysis/analysis_bp_breakdowns.py
+    needs: [generate_study_population_bp]
+    outputs:
+      moderately_sensitive:
+        bp_table_breakdowns: output/bp_table_code_*.csv
+        bp_plot_breakdowns: output/bp_plot_code_*.png
+
+  generate_proactive_timeseries:
+    run: python:latest python analysis/analysis_proactive_timeseries.py
+    needs: [generate_study_population_proactive]
+    outputs:
+      moderately_sensitive:
+        proactive_table_counts: output/proactive_table_counts.csv
+        proactive_plot_timeseries: output/proactive_plot_timeseries.png
+
+  generate_proactive_regional_timeseries:
+    run: python:latest python analysis/analysis_proactive_region.py
+    needs: [generate_study_population_proactive]
+    outputs:
+      moderately_sensitive:
+        proactive_table_counts_region: output/proactive_table_counts_*.csv
+        proactive_plot_timeseries_region: output/proactive_plot_timeseries_region_*.png
+
+  generate_proactive_breakdowns:
+    run: python:latest python analysis/analysis_proactive_breakdowns.py
+    needs: [generate_study_population_proactive]
+    outputs:
+      moderately_sensitive:
+        proactive_table_breakdowns: output/proactive_table_code_*.csv
+        proactive_plot_breakdowns: output/proactive_plot_code_*.png
+

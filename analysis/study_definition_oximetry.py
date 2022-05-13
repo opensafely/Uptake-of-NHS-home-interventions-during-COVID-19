@@ -2,7 +2,14 @@
 from cohortextractor import StudyDefinition, patients
 
 # Import codelist
-from codelist import pulse_oximetry_codes, shielding_list, covid_vaccine_1_EMIS_codes, covid_vaccine_2_EMIS_codes, care_home_codes
+from codelist import (
+    pulse_oximetry_codes,
+    shielding_list,
+    covid_vaccine_1_EMIS_codes,
+    covid_vaccine_2_EMIS_codes,
+    care_home_codes,
+    ethnicity_codelist,
+)
 
 from data_processing import loop_over_codes
 
@@ -18,8 +25,15 @@ study = StudyDefinition(
         "rate": "uniform",
     },
     # Define population - anyone who recieved at least one pulse_oximetry_code on or after 2019-04-01
-    population=patients.with_these_clinical_events(
-        pulse_oximetry_codes, on_or_after="2019-04-01"
+    population=patients.satisfying(
+        """
+            (has_oximetry_code) AND
+            (age > 0 AND age <= 110) AND
+            (region != "")
+        """,
+        has_oximetry_code=patients.with_these_clinical_events(
+            pulse_oximetry_codes, on_or_after="2019-04-01"
+        ),
     ),
     # Sex
     sex=patients.sex(
@@ -56,14 +70,33 @@ study = StudyDefinition(
         returning="binary_flag",
         return_expectations={"incidence": 0.25},
     ),
-    # index_of_multiple_deprivation
-    index_of_multiple_deprivation=patients.address_as_of(
-        date="index_date",
-        returning="index_of_multiple_deprivation",
-        round_to_nearest=100,
+    # IMD quintile
+    imd_quintile=patients.categorised_as(
+        {
+            "0": "DEFAULT",
+            "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
+            "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
+            "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
+            "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
+            "5": """index_of_multiple_deprivation >= 32844*4/5 """,
+        },
+        index_of_multiple_deprivation=patients.address_as_of(
+            date="index_date",
+            returning="index_of_multiple_deprivation",
+            round_to_nearest=100,
+        ),
         return_expectations={
             "rate": "universal",
-            "category": {"ratios": {"100": 0.1, "200": 0.2, "300": 0.7}},
+            "category": {
+                "ratios": {
+                    "0": 0.01,
+                    "1": 0.10,
+                    "2": 0.20,
+                    "3": 0.20,
+                    "4": 0.30,
+                    "5": 0.19,
+                }
+            },
         },
     ),
     # rural_urban_classification
@@ -90,7 +123,8 @@ study = StudyDefinition(
                     "West Midlands": 0.1,
                     "East of England": 0.1,
                     "London": 0.2,
-                    "South East": 0.2,
+                    "South East": 0.1,
+                    "South West": 0.1,
                 },
             },
         },
@@ -172,12 +206,48 @@ study = StudyDefinition(
         },
     ),
     # Ethnicity
-    ethnicity_6_sus=patients.with_ethnicity_from_sus(
-        returning="group_6",
-        use_most_frequent_code=True,
-        return_expectations={
-            "category": {"ratios": {"1": 0.2, "2": 0.2, "3": 0.2, "4": 0.2, "5": 0.2}},
-            "incidence": 0.8,
+    ethnicity=patients.categorised_as(
+        {
+            "Missing": "DEFAULT",
+            "White": "eth='1' OR (NOT eth AND ethnicity_sus='1')",
+            "Mixed": "eth='2' OR (NOT eth AND ethnicity_sus='2')",
+            "South Asian": "eth='3' OR (NOT eth AND ethnicity_sus='3')",
+            "Black": "eth='4' OR (NOT eth AND ethnicity_sus='4')",
+            "Other": "eth='5' OR (NOT eth AND ethnicity_sus='5')",
         },
+        return_expectations={
+            "category": {
+                "ratios": {
+                    "White": 0.2,
+                    "Mixed": 0.2,
+                    "South Asian": 0.2,
+                    "Black": 0.2,
+                    "Other": 0.2,
+                }
+            },
+            "incidence": 0.4,
+        },
+        ethnicity_sus=patients.with_ethnicity_from_sus(
+            returning="group_6",
+            use_most_frequent_code=True,
+            return_expectations={
+                "category": {
+                    "ratios": {"1": 0.2, "2": 0.2, "3": 0.2, "4": 0.2, "5": 0.2}
+                },
+                "incidence": 0.4,
+            },
+        ),
+        eth=patients.with_these_clinical_events(
+            ethnicity_codelist,
+            returning="category",
+            find_last_match_in_period=True,
+            on_or_before="index_date",
+            return_expectations={
+                "category": {
+                    "ratios": {"1": 0.4, "2": 0.4, "3": 0.2, "4": 0.2, "5": 0.2}
+                },
+                "incidence": 0.75,
+            },
+        ),
     ),
 )

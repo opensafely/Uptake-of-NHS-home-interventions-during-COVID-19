@@ -6,7 +6,7 @@ from cohortextractor import codelist, patients
 
 def make_variable(code: str, index_date: str) -> Dict[str, any]:
     return {
-        f"pulse_oximetry_{code}": (
+        f"healthcare_at_home_{code}": (
             patients.with_these_clinical_events(
                 codelist([code], system="snomed"),
                 find_first_match_in_period=True,
