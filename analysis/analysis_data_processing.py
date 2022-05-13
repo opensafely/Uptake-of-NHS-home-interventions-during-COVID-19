@@ -68,7 +68,7 @@ def redact_and_round_column(column: pd.Series) -> pd.Series:
             # Redact values less than or equal to 5
             if value <= 5:
                 value = "[REDACTED]"
-            # Round all values greater than 5 to nearest 5
+            # Round all values greater than 5 up to nearest 5
             else:
                 value = int(5 * math.ceil(float(value) / 5))
         # Resulting value is added to the new column
@@ -205,7 +205,7 @@ def code_specific_analysis(
     """Function to take a pulse oximetry code and save the timeseries and
     its underlying table, grouped by a specific column"""
     term = codes_dict[int(code)]
-    print('Term is ' + term)
+
     # Population of interest is all patients with the code
     codes_df = population_df.loc[population_df[term] == 1]
     # Count the number of patients in each age group for each index date
@@ -217,7 +217,7 @@ def code_specific_analysis(
         (codes_df.groupby("index_date").size()).to_dict()
     )
     # # Apply redacting and rounding to the counts
-    counts_df = redact_to_five_and_round(counts_df, "counts")
+    # counts_df = redact_to_five_and_round(counts_df, "counts")
     # Exclude denominators which are less than 100 (higher variation will make
     # timeseries less meaningful)
     counts_df["denominators"] = np.where(
@@ -287,7 +287,7 @@ proactive_codes_dict = {934231000000106: "Provision of proactive care"}
 
 
 # Create dictionary of oximetry, blood pressure and proactive care headers:
-# Keys are oximetry headers in input csv files (i.e. pulse_oximetry_code),
+# Keys are oximetry headers in input csv files (i.e. healthcare_at_home_code),
 # values are the terms they refer to
 oximetry_headers_dict = {
     f"healthcare_at_home_{k}": v for k, v in oximetry_codes_dict.items()

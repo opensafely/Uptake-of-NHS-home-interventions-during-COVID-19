@@ -29,8 +29,6 @@ study = StudyDefinition(
         """
             (has_oximetry_code) AND
             (age > 0 AND age <= 110) AND
-            (imd_quintile > 0) AND
-            (sex = "M" OR sex = "F") AND
             (region != "")
         """,
         has_oximetry_code=patients.with_these_clinical_events(
