@@ -5,19 +5,19 @@ expectations:
 
 actions:
   generate_study_population_oximetry:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_oximetry --index-date-range "2019-04-01 to 2022-05-12 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_oximetry --index-date-range "2021-11-01 to 2021-12-28 by week"
     outputs:
       highly_sensitive:
         oximetry_cohort: output/input_oximetry*.csv
 
   generate_study_population_bp:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_bp --index-date-range "2019-04-01 to 2022-05-12 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_bp --index-date-range "2021-11-01 to 2021-12-28 by week"
     outputs:
       highly_sensitive:
         bp_cohort: output/input_bp*.csv
 
   generate_study_population_proactive:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_proactive --index-date-range "2019-04-01 to 2022-05-12 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_proactive --index-date-range "2021-11-01 to 2021-12-28 by week"
     outputs:
       highly_sensitive:
         proactive_cohort: output/input_proactive*.csv
@@ -46,6 +46,14 @@ actions:
         oximetry_table_breakdowns: output/oximetry_table_code_*.csv
         oximetry_plot_breakdowns: output/oximetry_plot_code_*.png
 
+  generate_oximetry_codes_analysis:
+    run: python:latest python analysis/analysis_oximetry_codes.py
+    needs: [generate_study_population_oximetry]
+    outputs:
+      moderately_sensitive:
+        oximetry_table_code_counts: output/oximetry_table_code_counts_*.csv
+        oximetry_table_code_combinations: output/oximetry_table_code_combinations.csv
+
   generate_bp_timeseries:
     run: python:latest python analysis/analysis_bp_timeseries.py
     needs: [generate_study_population_bp]
@@ -69,6 +77,14 @@ actions:
       moderately_sensitive:
         bp_table_breakdowns: output/bp_table_code_*.csv
         bp_plot_breakdowns: output/bp_plot_code_*.png
+
+  generate_bp_codes_analysis:
+    run: python:latest python analysis/analysis_bp_codes.py
+    needs: [generate_study_population_bp]
+    outputs:
+      moderately_sensitive:
+        bp_table_code_counts: output/bp_table_code_counts_*.csv
+        bp_table_code_combinations: output/bp_table_code_combinations.csv
 
   generate_proactive_timeseries:
     run: python:latest python analysis/analysis_proactive_timeseries.py
