@@ -483,6 +483,12 @@ def number_of_uses_of_code(
     for code in patient_code.columns[1:]:
         code_summary = patient_code.groupby(code)["patient_id"].nunique()
         code_summary_df = pd.DataFrame(code_summary)
+        code_summary_df.rename(
+            columns={
+                "patient_id": "Total number of patients"
+            },
+            inplace=True,
+        )
         # Round and redact dataframe and save to csv
         redact_and_round_df(code_summary_df).to_csv(
             f"output/{homecare_type}_table_code_counts_{i}_{code}.csv"
@@ -512,8 +518,10 @@ def code_combinations(
     # Convert to dataframe
     patient_code = pd.DataFrame(patient_code)
 
-    # Rename column headers to code names
-    # patient_code.rename(columns=headers_dict, inplace=True)
+    # Rename column header
+    patient_code.rename(
+        columns={"patient_id": "Total number of uses of the combination"}, inplace=True
+    )
 
     # Round and redact dataframe and save to csv
     redact_and_round_df(patient_code).to_csv(
