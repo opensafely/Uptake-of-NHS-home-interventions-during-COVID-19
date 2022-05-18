@@ -285,7 +285,7 @@ def age_and_shielding_cumulative_labels(counts_df: pd.DataFrame) -> pd.DataFrame
     ]
 
     # Add the labels to the dataframe as a new column
-    counts_df["cumulative_labels"] = np.select(
+    counts_df["cumulative_age_and_shielding"] = np.select(
         conditionlist, choicelist, default="Not Specified"
     )
 
@@ -324,9 +324,9 @@ def produce_pivot_plot(
     counts_df: pd.DataFrame,
     code: str,
     term: str,
-    variable: str,
-    labels: str,
+    column_name: str,
     variable_title: str,
+    pivot_values: str,
     reorder_legend: list = None,
 ):
     """Function to create timeseries of code of interest broken down
@@ -335,8 +335,8 @@ def produce_pivot_plot(
     # Pivot based on column of interest
     pivot_df = counts_df.pivot(
         index="index_date",
-        columns=labels,
-        values=variable,
+        columns=column_name,
+        values=pivot_values,
     )
 
     # Produce plot
@@ -361,7 +361,7 @@ def produce_pivot_plot(
         + "_plot_code_"
         + code
         + "_"
-        + variable
+        + column_name
         + "_timeseries.png",
         bbox_inches="tight",
     )
@@ -402,9 +402,9 @@ def age_and_shielding_breakdown(
 
         # Create column of cumulative percentages based on age and shielding status
         # for each index date
-        counts_df["cumulative_age_and_shielding"] = np.nan
+        counts_df["cumulative_age_and_shielding_percentages"] = np.nan
         for index_date in counts_df.index_date.unique():
-            counts_df["cumulative_age_and_shielding"][
+            counts_df["cumulative_age_and_shielding_percentages"][
                 counts_df["index_date"] == index_date
             ] = counts_df["percentage"][counts_df["index_date"] == index_date].cumsum()
 
@@ -414,7 +414,7 @@ def age_and_shielding_breakdown(
             + homecare_type
             + "_table_code_"
             + code
-            + "_age_and_shielding_counts.csv"
+            + "cumulative_age_and_shielding_counts.csv"
         )
 
         # Produce the required timeseries
@@ -424,8 +424,8 @@ def age_and_shielding_breakdown(
             code,
             term,
             "cumulative_age_and_shielding",
-            "cumulative_labels",
             "age and shielding status",
+            "cumulative_age_and_shielding_percentages",
             [0, 2, 3, 1],
         )
 
@@ -470,7 +470,7 @@ def code_specific_analysis(
 
     # Produce the required timeseries
     produce_pivot_plot(
-        homecare_type, counts_df, code, term, "percentage", column_name, variable_title
+        homecare_type, counts_df, code, term, column_name, variable_title, "percentage"
     )
 
 
@@ -484,9 +484,7 @@ def number_of_uses_of_code(
         code_summary = patient_code.groupby(code)["patient_id"].nunique()
         code_summary_df = pd.DataFrame(code_summary)
         code_summary_df.rename(
-            columns={
-                "patient_id": "Total number of patients"
-            },
+            columns={"patient_id": "Total number of patients"},
             inplace=True,
         )
         # Round and redact dataframe and save to csv

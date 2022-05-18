@@ -102,7 +102,7 @@ def analysis_breakdowns(homecare_type: str, codes_dict: dict, codes_of_interest)
     population_df, cohort_size = create_population_df(homecare_type)
 
     # Add age category column to population dataframe
-    age_bins = [0, 1, 40, 50, 65, 111, 2000]
+    age_bins = [0, 40, 50, 65, 2000]
     population_df = add_age_category(population_df, age_bins)
 
     # Add age_and_shielding column
