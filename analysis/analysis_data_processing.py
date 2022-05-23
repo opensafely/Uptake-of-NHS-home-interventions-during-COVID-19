@@ -390,9 +390,7 @@ def age_and_shielding_breakdown(
         counts_df.rename(columns={0: "counts"}, inplace=True)
 
         # Apply redacting and rounding to the counts
-        # counts_df["counts"] = redact_and_round_column(counts_df["counts"])
-        # Redact counts for any week where at least one count has been redacted
-        # counts_df = further_redaction_all(counts_df, "counts")
+        counts_df = redact_to_five_and_round(counts_df, "counts")
 
         # Add denominator (total size of the cohort for each week) and percentage
         counts_df = denominator_and_percentage(codes_df, counts_df)
@@ -452,7 +450,7 @@ def code_specific_analysis(
     counts_df.rename(columns={0: "counts"}, inplace=True)
 
     # # Apply redacting and rounding to the counts
-    # counts_df = redact_to_five_and_round(counts_df, "counts")
+    counts_df = redact_to_five_and_round(counts_df, "counts")
 
     # Add denominator (total size of the cohort for each week) and percentage
     counts_df = denominator_and_percentage(codes_df, counts_df)

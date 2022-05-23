@@ -1,4 +1,4 @@
-# Script to create timeseries of pulse oximetry codes usage for each region
+# Script to create analysis tables of oximetry codes usage and combinations
 
 import sys
 
