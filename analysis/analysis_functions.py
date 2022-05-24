@@ -164,4 +164,5 @@ def code_analysis(homecare_type: str, headers_dict: dict):
     number_of_uses_of_code(homecare_type, headers, patient_code)
 
     # Summarise all code combinations used over time period
-    code_combinations(homecare_type, patient_code)
+    if len(headers) > 1:
+        code_combinations(homecare_type, patient_code)

@@ -110,3 +110,10 @@ actions:
         proactive_table_breakdowns: output/proactive_table_code_*.csv
         proactive_plot_breakdowns: output/proactive_plot_code_*.png
 
+  generate_proactive_codes_analysis:
+    run: python:latest python analysis/analysis_proactive_codes.py
+    needs: [generate_study_population_proactive]
+    outputs:
+      moderately_sensitive:
+        proactive_table_code_counts: output/proactive_table_code_counts_*.csv
+
