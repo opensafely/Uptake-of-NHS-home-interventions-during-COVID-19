@@ -68,7 +68,10 @@ def analysis_region(homecare_type: str, headers_dict: dict):
     # Apply redaction to entire data frame
     for header in list(headers_dict.values()):
         sum_regions = redact_to_five_and_round(sum_regions, header)
-
+  
+    # Save the dataframe
+    sum_regions.to_csv("output/" + homecare_type + "_table_counts_allregions.csv")
+    
     # Define homecare title for plot
     title = homecare_title(homecare_type)
 
