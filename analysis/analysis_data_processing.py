@@ -81,7 +81,9 @@ def redact_and_round_column(column: pd.Series) -> pd.Series:
     return new_column
 
 
-def redact_to_five_and_round(counts_df: pd.DataFrame, column_name: str) -> pd.DataFrame:
+def redact_to_five_and_round(
+    counts_df: pd.DataFrame, column_to_redact: str
+) -> pd.DataFrame:
     """Function which determines for each index date if any value in a dataframe column
     is <= 5 and if so redacts all values <=5 then continues redacting the next lowest
     value until the redacted values add up to >= 5.
@@ -91,14 +93,14 @@ def redact_to_five_and_round(counts_df: pd.DataFrame, column_name: str) -> pd.Da
         # Create temporary dataframe of all the rows with that index date
         temp_df = counts_df[counts_df["index_date"] == index_date]
         # If sum of values in the column <= 5
-        if pd.to_numeric(temp_df[column_name], errors="coerce").sum() <= 5:
+        if pd.to_numeric(temp_df[column_to_redact], errors="coerce").sum() <= 5:
             # Redact all values in the column
-            temp_df[column_name] = "[REDACTED]"
+            temp_df[column_to_redact] = "[REDACTED]"
         # Else if there are any numbers <= 5 in the column of interest
         elif (
             pd.to_numeric(
-                temp_df[column_name][
-                    pd.to_numeric(temp_df[column_name], errors="coerce") <= 5
+                temp_df[column_to_redact][
+                    pd.to_numeric(temp_df[column_to_redact], errors="coerce") <= 5
                 ],
                 errors="coerce",
             ).count()
@@ -109,28 +111,35 @@ def redact_to_five_and_round(counts_df: pd.DataFrame, column_name: str) -> pd.Da
             # For each row
             for index in temp_df.index.values:
                 # If column value is less than 5
-                if pd.to_numeric(temp_df.loc[index, column_name], errors="coerce") <= 5:
+                if (
+                    pd.to_numeric(temp_df.loc[index, column_to_redact], errors="coerce")
+                    <= 5
+                ):
                     # Add to the total_redacted variable
-                    total_redacted += temp_df.loc[index, column_name]
+                    total_redacted += temp_df.loc[index, column_to_redact]
                     # Redact the value
-                    temp_df.loc[index, column_name] = "[REDACTED]"
+                    temp_df.loc[index, column_to_redact] = "[REDACTED]"
                     # While total_redacted <= 5
                     while total_redacted <= 5:
                         # Find index of the lowest non-redacted count for that index date
                         min_index = pd.to_numeric(
-                            temp_df[temp_df[column_name] != "[REDACTED]"][column_name]
+                            temp_df[temp_df[column_to_redact] != "[REDACTED]"][
+                                column_to_redact
+                            ]
                         ).idxmin()
                         # Add to the total_redacted variable
-                        total_redacted += temp_df.loc[min_index, column_name]
+                        total_redacted += temp_df.loc[min_index, column_to_redact]
                         # Redact the value
-                        temp_df.at[min_index, column_name] = "[REDACTED]"
+                        temp_df.at[min_index, column_to_redact] = "[REDACTED]"
         # Update counts dataframe with the redactions
         counts_df.update(temp_df)
-        # Round all numeric values in column up to nearest 5
-        for index in counts_df.index.values:
-            value = counts_df.loc[index, column_name]
-            if type(value) == int or type(value) == float:
-                counts_df.loc[index, column_name] = int(5 * math.ceil(float(value) / 5))
+    # Round all numeric values in column up to nearest 5
+    for index in counts_df.index.values:
+        value = counts_df.loc[index, column_to_redact]
+        if type(value) != str:
+            counts_df.loc[index, column_to_redact] = int(
+                5 * math.ceil(float(value) / 5)
+            )
     return counts_df
 
 
@@ -181,6 +190,55 @@ def further_redaction(counts_df: pd.DataFrame, column_name: str) -> pd.DataFrame
             # Update counts dataframe with extra redaction
             counts_df.update(temp_df)
     return counts_df
+
+
+def convert_weekly_to_monthly(
+    counts_table: pd.DataFrame, column_name: str
+) -> pd.DataFrame:
+    """Converts a counts table of practice-level weekly counts to counts aggregated
+    every 4 weeks. Where the number of weeks is not divisible by 4, the earliest weeks
+    are dropped to ensure number of weeks is a multiple of 4.
+    """
+
+    dates = counts_table["index_date"].sort_values(ascending=True).unique()
+
+    # drop earliest weeks if number of weeks not a multiple of 4.
+    num_dates = len(dates)
+    num_dates_over = num_dates % 4
+    if num_dates_over != 0:
+        # drop rows from counts table
+        counts_table = counts_table.loc[
+            ~counts_table["index_date"].isin(dates[0:num_dates_over]),
+            counts_table.columns,
+        ]
+
+        # drop dates from dates list
+        dates = dates[num_dates_over:]
+
+    # create 4 weekly date
+    dates_map = {}
+    for i in range(0, len(dates), 4):
+        date_group = dates[i : i + 4]
+        for date in date_group:
+            dates_map[date] = date_group[0]
+    counts_table.loc[counts_table.index, "index_date"] = counts_table.loc[
+        counts_table.index, "index_date"
+    ].map(dates_map)
+
+    # group into 4 weeks
+    counts_table = (
+        (
+            counts_table.groupby(by=[column_name, "index_date"])[
+                ["counts", "denominators"]
+            ]
+            .sum()
+            .reset_index()
+        )
+        .sort_values(by=["index_date"])
+        .reset_index(drop=True)
+    )
+
+    return counts_table
 
 
 def produce_plot(
@@ -292,21 +350,29 @@ def age_and_shielding_cumulative_labels(counts_df: pd.DataFrame) -> pd.DataFrame
     return counts_df
 
 
-def denominator_and_percentage(
-    codes_df: pd.DataFrame, counts_df: pd.DataFrame
+def create_monthly_counts_table(
+    codes_df: pd.DataFrame,
+    counts_df: pd.DataFrame,
+    column_name: str,
 ) -> pd.DataFrame:
-    """Function to add denominators and percentages to counts dataframe"""
+    """Function to take a weekly counts dataframe,
+    change it to monthly, apply redacting and rounding
+    and add denominators and percentages"""
 
     # Denominator is total cohort size for that index date
     counts_df["denominators"] = counts_df["index_date"].map(
         (codes_df.groupby("index_date").size()).to_dict()
     )
 
+    # Convert to monthly table
+    counts_df = convert_weekly_to_monthly(counts_df, column_name)
+
     # Exclude denominators which are less than 100 (higher variation will make
     # timeseries less meaningful)
-    counts_df["denominators"] = np.where(
-        counts_df["denominators"] >= 100, counts_df["denominators"], "Less than 100"
-    )
+    counts_df["denominators"][counts_df["denominators"] <= 100] = "Less than 100"
+
+    # Apply redacting and rounding to the counts
+    counts_df = redact_to_five_and_round(counts_df, "counts")
 
     # Calculate the percentages
     counts_df["percentage"] = round(
@@ -341,7 +407,7 @@ def produce_pivot_plot(
 
     # Produce plot
     plot_title = 'Patients with "' + term + '" code, grouped by ' + variable_title
-    produce_plot(pivot_df, plot_title, x_label="Date")
+    produce_plot(pivot_df, plot_title, x_label="Date", y_label="Percentage")
 
     # Reorder legend if required
     if reorder_legend is not None:
@@ -389,11 +455,10 @@ def age_and_shielding_breakdown(
         )
         counts_df.rename(columns={0: "counts"}, inplace=True)
 
-        # Apply redacting and rounding to the counts
-        counts_df = redact_to_five_and_round(counts_df, "counts")
-
-        # Add denominator (total size of the cohort for each week) and percentage
-        counts_df = denominator_and_percentage(codes_df, counts_df)
+        # Add denominators and percentages, change dataframe to monthly and redact and round
+        counts_df = create_monthly_counts_table(
+            codes_df, counts_df, column_name="age_and_shielding"
+        )
 
         # Create column containing labels for cumulative percentages
         counts_df = age_and_shielding_cumulative_labels(counts_df)
@@ -412,7 +477,7 @@ def age_and_shielding_breakdown(
             + homecare_type
             + "_table_code_"
             + code
-            + "cumulative_age_and_shielding_counts.csv"
+            + "_cumulative_age_and_shielding_counts.csv"
         )
 
         # Produce the required timeseries
@@ -449,11 +514,8 @@ def code_specific_analysis(
     counts_df = codes_df.groupby(["index_date", column_name]).size().reset_index()
     counts_df.rename(columns={0: "counts"}, inplace=True)
 
-    # # Apply redacting and rounding to the counts
-    counts_df = redact_to_five_and_round(counts_df, "counts")
-
-    # Add denominator (total size of the cohort for each week) and percentage
-    counts_df = denominator_and_percentage(codes_df, counts_df)
+    # Add denominators and percentages, change dataframe to monthly and redact and round
+    counts_df = create_monthly_counts_table(codes_df, counts_df, column_name)
 
     # Save the dataframe in outputs folder
     counts_df.to_csv(
