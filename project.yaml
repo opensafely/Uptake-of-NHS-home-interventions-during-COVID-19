@@ -4,24 +4,58 @@ expectations:
   population_size: 1000
 
 actions:
+  generate_study_definition_static:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_static
+
+    outputs:
+      highly_sensitive:
+        cohort: output/input_static.csv
+
+  # Oximetry
   generate_study_population_oximetry:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_oximetry --index-date-range "2019-04-01 to 2022-05-12 by week"
     outputs:
       highly_sensitive:
         oximetry_cohort: output/input_oximetry*.csv
 
+  join_cohorts_oximetry:
+    run: cohort-joiner:v0.0.30 --lhs output/input_oximetry*.csv --rhs output/input_static.csv --output-dir output/joined
+    needs:
+      [generate_study_population_oximetry, generate_study_definition_static]
+    outputs:
+      highly_sensitive:
+        cohort: output/joined/input_oximetry*.csv
+
+  # BP
   generate_study_population_bp:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_bp --index-date-range "2019-04-01 to 2022-05-12 by week"
     outputs:
       highly_sensitive:
         bp_cohort: output/input_bp*.csv
 
+  join_cohorts_bp:
+    run: cohort-joiner:v0.0.30 --lhs output/input_bp*.csv --rhs output/input_static.csv --output-dir output/joined
+    needs: [generate_study_population_bp, generate_study_definition_static]
+    outputs:
+      highly_sensitive:
+        cohort: output/joined/input_bp*.csv
+
+  # Proactive
   generate_study_population_proactive:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_proactive --index-date-range "2019-04-01 to 2022-05-12 by week"
     outputs:
       highly_sensitive:
         proactive_cohort: output/input_proactive*.csv
 
+  join_cohorts_proactive:
+    run: cohort-joiner:v0.0.30 --lhs output/input_proactive*.csv --rhs output/input_static.csv --output-dir output/joined
+    needs:
+      [generate_study_population_proactive, generate_study_definition_static]
+    outputs:
+      highly_sensitive:
+        cohort: output/joined/input_proactive*.csv
+
+  # Analysis
   generate_oximetry_timeseries:
     run: python:latest python analysis/analysis_oximetry_timeseries.py
     needs: [generate_study_population_oximetry]
@@ -116,4 +150,3 @@ actions:
     outputs:
       moderately_sensitive:
         proactive_table_code_counts: output/proactive_table_code_counts_*.csv
-
