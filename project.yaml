@@ -5,19 +5,19 @@ expectations:
 
 actions:
   generate_study_population_oximetry:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_oximetry --index-date-range "2019-04-01 to 2022-05-12 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_oximetry --index-date-range "2021-11-01 to 2021-12-28 by week"
     outputs:
       highly_sensitive:
         oximetry_cohort: output/input_oximetry*.csv
 
   generate_study_population_bp:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_bp --index-date-range "2019-04-01 to 2022-05-12 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_bp --index-date-range "2021-11-01 to 2021-12-28 by week"
     outputs:
       highly_sensitive:
         bp_cohort: output/input_bp*.csv
 
   generate_study_population_proactive:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_proactive --index-date-range "2019-04-01 to 2022-05-12 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_proactive --index-date-range "2021-11-01 to 2021-12-28 by week"
     outputs:
       highly_sensitive:
         proactive_cohort: output/input_proactive*.csv
