@@ -12,10 +12,8 @@ if "." not in sys.path:
 from analysis_data_processing import (
     create_population_df,
     redact_and_round_df,
-    redact_and_round_column,
     code_specific_analysis,
     redact_to_five_and_round,
-    further_redaction_all,
     produce_plot,
     add_age_category,
     add_age_and_shielding_column,
@@ -68,10 +66,10 @@ def analysis_region(homecare_type: str, headers_dict: dict):
     # Apply redaction to entire data frame
     for header in list(headers_dict.values()):
         sum_regions = redact_to_five_and_round(sum_regions, header)
-  
+
     # Save the dataframe
     sum_regions.to_csv("output/" + homecare_type + "_table_counts_allregions.csv")
-    
+
     # Define homecare title for plot
     title = homecare_title(homecare_type)
 
@@ -149,7 +147,7 @@ def analysis_breakdowns(homecare_type: str, codes_dict: dict, codes_of_interest)
 def code_analysis(homecare_type: str, headers_dict: dict):
     """Function to summarise how many times patients received each code over the
     entire time period and how many times each possible combination of codes occured"""
-    
+
     # Create population data frame which includes all weeks and dictionary of
     # cohort size for each individual week
     population_df, cohort_size = create_population_df(homecare_type)

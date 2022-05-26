@@ -13,7 +13,7 @@ from textwrap import wrap
 
 
 def create_population_df(
-    homecare_type: str, dir: str = "output/"
+    homecare_type: str, dir: str = "output/completed/"
 ) -> Tuple[pd.DataFrame, dict]:
     """Function to create population data frame for a particular homecare type
     which includes all weeks and create a dictionary of cohort size for each

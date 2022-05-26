@@ -3,7 +3,10 @@ model.log
 */input.csv
 __pycache__
 .python-version
-/output/*
 metadata/*
 venv/
 .DS_Store
+/output/*.csv
+/output/completed/*.csv
+*.png
+*.xlsx
