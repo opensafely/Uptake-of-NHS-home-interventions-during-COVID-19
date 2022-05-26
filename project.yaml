@@ -4,27 +4,61 @@ expectations:
   population_size: 1000
 
 actions:
+  generate_study_definition_static:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_static
+
+    outputs:
+      highly_sensitive:
+        cohort: output/input_static.csv
+
+  # Oximetry
   generate_study_population_oximetry:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_oximetry --index-date-range "2019-04-01 to 2022-05-12 by week"
     outputs:
       highly_sensitive:
         oximetry_cohort: output/input_oximetry*.csv
 
+  join_cohorts_oximetry:
+    run: cohort-joiner:v0.0.30 --lhs output/input_oximetry*.csv --rhs output/input_static.csv --output-dir output/completed
+    needs:
+      [generate_study_population_oximetry, generate_study_definition_static]
+    outputs:
+      highly_sensitive:
+        cohort: output/completed/input_oximetry*.csv
+
+  # BP
   generate_study_population_bp:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_bp --index-date-range "2019-04-01 to 2022-05-12 by week"
     outputs:
       highly_sensitive:
         bp_cohort: output/input_bp*.csv
 
+  join_cohorts_bp:
+    run: cohort-joiner:v0.0.30 --lhs output/input_bp*.csv --rhs output/input_static.csv --output-dir output/completed
+    needs: [generate_study_population_bp, generate_study_definition_static]
+    outputs:
+      highly_sensitive:
+        cohort: output/completed/input_bp*.csv
+
+  # Proactive
   generate_study_population_proactive:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_proactive --index-date-range "2019-04-01 to 2022-05-12 by week"
     outputs:
       highly_sensitive:
         proactive_cohort: output/input_proactive*.csv
 
+  join_cohorts_proactive:
+    run: cohort-joiner:v0.0.30 --lhs output/input_proactive*.csv --rhs output/input_static.csv --output-dir output/completed
+    needs:
+      [generate_study_population_proactive, generate_study_definition_static]
+    outputs:
+      highly_sensitive:
+        cohort: output/completed/input_proactive*.csv
+
+  # Analysis
   generate_oximetry_timeseries:
     run: python:latest python analysis/analysis_oximetry_timeseries.py
-    needs: [generate_study_population_oximetry]
+    needs: [join_cohorts_oximetry]
     outputs:
       moderately_sensitive:
         oximetry_table_counts: output/oximetry_table_counts.csv
@@ -32,7 +66,7 @@ actions:
 
   generate_oximetry_regional_timeseries:
     run: python:latest python analysis/analysis_oximetry_region.py
-    needs: [generate_study_population_oximetry]
+    needs: [join_cohorts_oximetry]
     outputs:
       moderately_sensitive:
         oximetry_table_counts_region: output/oximetry_table_counts_*.csv
@@ -40,15 +74,23 @@ actions:
 
   generate_oximetry_breakdowns:
     run: python:latest python analysis/analysis_oximetry_breakdowns.py
-    needs: [generate_study_population_oximetry]
+    needs: [join_cohorts_oximetry]
     outputs:
       moderately_sensitive:
         oximetry_table_breakdowns: output/oximetry_table_code_*.csv
         oximetry_plot_breakdowns: output/oximetry_plot_code_*.png
 
+  generate_oximetry_codes_analysis:
+    run: python:latest python analysis/analysis_oximetry_codes.py
+    needs: [join_cohorts_oximetry]
+    outputs:
+      moderately_sensitive:
+        oximetry_table_code_counts: output/oximetry_table_code_counts_*.csv
+        oximetry_table_code_combinations: output/oximetry_table_code_combinations.csv
+
   generate_bp_timeseries:
     run: python:latest python analysis/analysis_bp_timeseries.py
-    needs: [generate_study_population_bp]
+    needs: [join_cohorts_bp]
     outputs:
       moderately_sensitive:
         bp_table_counts: output/bp_table_counts.csv
@@ -56,7 +98,7 @@ actions:
 
   generate_bp_regional_timeseries:
     run: python:latest python analysis/analysis_bp_region.py
-    needs: [generate_study_population_bp]
+    needs: [join_cohorts_bp]
     outputs:
       moderately_sensitive:
         bp_table_counts_region: output/bp_table_counts_*.csv
@@ -64,15 +106,23 @@ actions:
 
   generate_bp_breakdowns:
     run: python:latest python analysis/analysis_bp_breakdowns.py
-    needs: [generate_study_population_bp]
+    needs: [join_cohorts_bp]
     outputs:
       moderately_sensitive:
         bp_table_breakdowns: output/bp_table_code_*.csv
         bp_plot_breakdowns: output/bp_plot_code_*.png
 
+  generate_bp_codes_analysis:
+    run: python:latest python analysis/analysis_bp_codes.py
+    needs: [join_cohorts_bp]
+    outputs:
+      moderately_sensitive:
+        bp_table_code_counts: output/bp_table_code_counts_*.csv
+        bp_table_code_combinations: output/bp_table_code_combinations.csv
+
   generate_proactive_timeseries:
     run: python:latest python analysis/analysis_proactive_timeseries.py
-    needs: [generate_study_population_proactive]
+    needs: [join_cohorts_proactive]
     outputs:
       moderately_sensitive:
         proactive_table_counts: output/proactive_table_counts.csv
@@ -80,7 +130,7 @@ actions:
 
   generate_proactive_regional_timeseries:
     run: python:latest python analysis/analysis_proactive_region.py
-    needs: [generate_study_population_proactive]
+    needs: [join_cohorts_proactive]
     outputs:
       moderately_sensitive:
         proactive_table_counts_region: output/proactive_table_counts_*.csv
@@ -88,9 +138,15 @@ actions:
 
   generate_proactive_breakdowns:
     run: python:latest python analysis/analysis_proactive_breakdowns.py
-    needs: [generate_study_population_proactive]
+    needs: [join_cohorts_proactive]
     outputs:
       moderately_sensitive:
         proactive_table_breakdowns: output/proactive_table_code_*.csv
         proactive_plot_breakdowns: output/proactive_plot_code_*.png
 
+  generate_proactive_codes_analysis:
+    run: python:latest python analysis/analysis_proactive_codes.py
+    needs: [join_cohorts_proactive]
+    outputs:
+      moderately_sensitive:
+        proactive_table_code_counts: output/proactive_table_code_counts_*.csv
