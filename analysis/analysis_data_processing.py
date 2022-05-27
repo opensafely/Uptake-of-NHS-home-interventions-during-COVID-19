@@ -372,7 +372,11 @@ def create_monthly_counts_table(
     counts_df["denominators"][counts_df["denominators"] <= 100] = "Less than 100"
 
     # Apply redacting and rounding to the counts
-    counts_df = redact_to_five_and_round(counts_df, "counts")
+    if column_name == "age_and_shielding":
+        counts_df["counts"] = redact_and_round_column(counts_df["counts"])
+        counts_df = further_redaction_all(counts_df, "counts")
+    else:
+        counts_df = redact_to_five_and_round(counts_df, "counts")
 
     # Calculate the percentages
     counts_df["percentage"] = round(
