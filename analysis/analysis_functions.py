@@ -81,15 +81,18 @@ def analysis_region(homecare_type: str, headers_dict: dict):
         region_df.to_csv("output/" + homecare_type + "_table_counts_" + region + ".csv")
         # Create timeseries of pulse oximetry codes usage
         region_df.set_index("index_date", inplace=True)
-        produce_plot(
-            region_df,
-            "Use of " + title + " Over Time in " + region + " Region",
-            "Date",
-        )
-        plt.savefig(
-            "output/" + homecare_type + "_plot_timeseries_region_" + region,
-            bbox_inches="tight",
-        )
+        try:
+            produce_plot(
+                region_df,
+                "Use of " + title + " Over Time in " + region + " Region",
+                "Date",
+            )
+            plt.savefig(
+                "output/" + homecare_type + "_plot_timeseries_region_" + region,
+                bbox_inches="tight",
+            )
+        except:
+            pass
 
 
 def analysis_breakdowns(homecare_type: str, codes_dict: dict, codes_of_interest):
