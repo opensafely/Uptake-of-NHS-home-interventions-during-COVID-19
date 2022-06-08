@@ -16,14 +16,14 @@ from data_processing import loop_over_codes
 # Study definition
 study = StudyDefinition(
     # set index_date
-    index_date="2021-01-01",
+    index_date="2019-04-01",
     # Define default expectations
     default_expectations={
         "date": {"earliest": "2019-04-01", "latest": "2022-02-01"},
         "incidence": "0.2",
         "rate": "uniform",
     },
-    # Define population - anyone who recieved at least one pulse_oximetry_code on or after 2019-04-01
+   # Define population inclusion criteria
     population=patients.satisfying(
         """
             (has_bp_code) AND
@@ -32,12 +32,9 @@ study = StudyDefinition(
             (imd_quintile != 0)
         """,
         has_bp_code=patients.with_these_clinical_events(
-            bp_codes, on_or_after="2019-04-01"
+            bp_codes, between=["2019-04-01", "2022-06-05"]
         ),
     ),
-    # population=patients.with_these_clinical_events(
-    #     bp_codes, on_or_after="2019-04-01"
-    # ),
     # Sex
     sex=patients.sex(
         return_expectations={

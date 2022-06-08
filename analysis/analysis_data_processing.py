@@ -364,6 +364,12 @@ def create_monthly_counts_table(
         (codes_df.groupby("index_date").size()).to_dict()
     )
 
+    # Round the weekly denominators up to nearest 5
+    for i, row in counts_df.iterrows():
+        counts_df.at[i, "denominators"] = int(
+            5 * math.ceil(float(counts_df.loc[i, "denominators"]) / 5)
+        )
+
     # Convert to monthly table
     counts_df = convert_weekly_to_monthly(counts_df, column_name)
 
@@ -628,16 +634,3 @@ bp_headers_dict = {f"healthcare_at_home_{k}": v for k, v in bp_codes_dict.items(
 proactive_headers_dict = {
     f"healthcare_at_home_{k}": v for k, v in proactive_codes_dict.items()
 }
-
-# Region list
-region_list = [
-    "North East",
-    "North West",
-    "Yorkshire and the Humber",
-    "East Midlands",
-    "West Midlands",
-    "East of England",
-    "London",
-    "South East",
-    "South West",
-]
