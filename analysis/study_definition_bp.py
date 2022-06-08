@@ -32,12 +32,9 @@ study = StudyDefinition(
             (imd_quintile != 0)
         """,
         has_bp_code=patients.with_these_clinical_events(
-            bp_codes, on_or_after="2019-04-01"
+            bp_codes, between=["2022-02-07", "2022-04-17"]
         ),
     ),
-    # population=patients.with_these_clinical_events(
-    #     bp_codes, on_or_after="2019-04-01"
-    # ),
     # Sex
     sex=patients.sex(
         return_expectations={

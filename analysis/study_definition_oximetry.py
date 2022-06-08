@@ -32,7 +32,7 @@ study = StudyDefinition(
             (imd_quintile != 0)
         """,
         has_oximetry_code=patients.with_these_clinical_events(
-            pulse_oximetry_codes, on_or_after="2019-04-01"
+            pulse_oximetry_codes,  between=["2022-02-07", "2022-04-17"]
         ),
     ),
     # Sex

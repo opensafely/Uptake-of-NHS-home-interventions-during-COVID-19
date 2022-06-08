@@ -32,13 +32,9 @@ study = StudyDefinition(
             (imd_quintile != 0)
         """,
         has_proactive_code=patients.with_these_clinical_events(
-            proactive_codes, on_or_after="2019-04-01"
+            proactive_codes, between=["2022-02-07", "2022-04-17"]
         ),
     ),
-    # # Define population - anyone who recieved at least one pulse_oximetry_code on or after 2019-04-01
-    # population=patients.with_these_clinical_events(
-    #     proactive_codes, on_or_after="2019-04-01"
-    # ),
     # Sex
     sex=patients.sex(
         return_expectations={

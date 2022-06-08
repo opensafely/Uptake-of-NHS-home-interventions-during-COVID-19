@@ -22,7 +22,6 @@ from analysis_data_processing import (
     number_of_uses_of_code,
     code_combinations,
     homecare_title,
-    region_list,
 )
 
 
@@ -57,6 +56,9 @@ def analysis_region(homecare_type: str, headers_dict: dict):
     # Create population data frame which includes all weeks and dictionary of
     # cohort size for each individual week
     population_df, cohort_size = create_population_df(homecare_type)
+
+    # Create list of regions in the data
+    region_list = population_df["region"].unique()
 
     # Create data frame of sum totals for each index date for each oximetry code
     sum_regions = population_df.groupby(["index_date", "region"], as_index=False)[
