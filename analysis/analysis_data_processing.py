@@ -603,6 +603,9 @@ def no_codes_used(homecare_type: str):
         homecare_type, dir="output/completed/"
     )
 
+    # Consider the number of unique patients
+    population_df = population_df.drop_duplicates(subset=["patient_id"])
+
     # Condition is that all columns relating to SNOMED codes for that homecare_type are 0
     if homecare_type == "oximetry":
         condition_list = (
