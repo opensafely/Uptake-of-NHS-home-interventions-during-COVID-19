@@ -597,6 +597,70 @@ def code_combinations(
     )
 
 
+def no_codes_used(homecare_type: str):
+    """Function to identify index dates for patients with no codes relating to the releveant healthcare type"""
+    population_df, cohort_size = create_population_df(
+        homecare_type, dir="output/completed/"
+    )
+
+    # Condition is that all columns relating to SNOMED codes for that homecare_type are 0
+    if homecare_type == "oximetry":
+        condition_list = (
+            (population_df["Telehealth pulse oximetry monitoring started"] == 0)
+            & (population_df["Telehealth pulse oximetry monitoring ended"] == 0)
+            & (population_df["Provision of pulse oximeter"] == 0)
+            & (
+                population_df["Telehealth pulse oximetry monitoring not appropriate"]
+                == 0
+            )
+            & (population_df["Telehealth pulse oximetry monitoring declined"] == 0)
+            & (
+                population_df[
+                    "Referral to telehealth pulse oximetry monitoring service"
+                ]
+                == 0
+            )
+            & (
+                population_df[
+                    "Referral by telehealth pulse oximetry monitoring service"
+                ]
+                == 0
+            )
+            & (
+                population_df[
+                    "Discharge from telehealth pulse oximetry monitoring service"
+                ]
+                == 0
+            )
+            & (
+                population_df["Discussion about telehealth pulse oximetry monitoring"]
+                == 0
+            )
+            & (population_df["Has access to pulse oximeter"] == 0)
+            & (population_df["Oxygen saturation at periphery unknown"] == 0)
+            & (population_df["Oxygen saturation at periphery equivocal"] == 0)
+        )
+    elif homecare_type == "bp":
+        condition_list = (
+            (population_df["Average day interval systolic blood pressure"] == 0)
+            & (population_df["Average day interval diastolic blood pressure"] == 0)
+            & (population_df["Average home diastolic blood pressure"] == 0)
+            & (population_df["Average home systolic blood pressure"] == 0)
+        )
+    elif homecare_type == "proactive":
+        condition_list = population_df["Provision of proactive care"] == 0
+
+    # Extract those with none of the relevant SNOMED codes
+    no_codes_used = population_df.loc[condition_list]
+    # Identify the index dates for those patients
+    no_codes_used = no_codes_used["index_date"].value_counts().to_frame()
+
+    # Round and redact dataframe and save to csv
+    redact_and_round_df(no_codes_used).to_csv(
+        f"output/{homecare_type}_table_no_codes_used.csv"
+    )
+
+
 def homecare_title(homecare_type):
     """Function to return title for plots based on homecare type"""
     if homecare_type == "oximetry":
