@@ -4,39 +4,24 @@ import random
 from cohortextractor import codelist, patients
 
 
-def make_variable(code: str, index_date: str, time: str, system: str) -> Dict[str, any]:
-
-    if time == "between":
-        return {
-            f"healthcare_at_home_{code}": (
-                patients.with_these_clinical_events(
-                    codelist([code], system=system),
-                    find_first_match_in_period=True,
-                    returning="binary_flag",
-                    between=[index_date, f"{index_date} + 6 days"],
-                    return_expectations={"incidence": random.randint(1, 5) / 10},
-                )
+def make_variable(code: str, index_date: str, title: str, returning: str) -> Dict[str, any]:
+    return {
+        f"{title}_{code}": (
+            patients.with_these_clinical_events(
+                codelist([code], system="snomed"),
+                find_first_match_in_period=True,
+                returning=returning,
+                between=[index_date, f"{index_date} + 6 days"],
+                return_expectations={"incidence": random.randint(1, 5) / 10},
             )
-        }
-
-    if time == "on_or_before":
-        return {
-            f"healthcare_at_home_{code}": (
-                patients.with_these_clinical_events(
-                    codelist([code], system=system),
-                    find_first_match_in_period=True,
-                    returning="binary_flag",
-                    on_or_before="index_date",
-                    return_expectations={"incidence": random.randint(1, 5) / 10},
-                )
-            )
-        }
+        )
+    }
 
 
 def loop_over_codes(
-    code_list: List, index_date: str, time: str = "between", system: str = "snomed"
-):
+    code_list: List, index_date: str, title: str = "healthcare_at_home", returning: str = "binary_flag"
+) -> Dict[str, any]:
     variables = {}
     for code in code_list:
-        variables.update(make_variable(code, index_date, time, system))
+        variables.update(make_variable(code, index_date, title, returning))
     return variables

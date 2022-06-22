@@ -11,46 +11,6 @@ actions:
       highly_sensitive:
         cohort: output/input_static.csv
 
-  # hypertension
-  generate_study_definition_hypertension:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_hypertension
-
-    outputs:
-      highly_sensitive:
-        cohort: output/input_hypertension.csv
-
-  # diabetes_type_2
-  generate_study_definition_diabetes_type_2:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_diabetes_type_2
-
-    outputs:
-      highly_sensitive:
-        cohort: output/input_diabetes_type_2.csv
-
-  # asthma
-  generate_study_definition_asthma:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_asthma
-
-    outputs:
-      highly_sensitive:
-        cohort: output/input_asthma.csv
-
-  # copd
-  generate_study_definition_copd:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_copd
-
-    outputs:
-      highly_sensitive:
-        cohort: output/input_copd.csv
-
-  # atrial_fibrillation
-  generate_study_definition_atrial_fibrillation:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_atrial_fibrillation
-
-    outputs:
-      highly_sensitive:
-        cohort: output/input_atrial_fibrillation.csv
-
   # Oximetry
   generate_study_population_oximetry:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_oximetry --index-date-range "2019-04-01 to 2022-05-30 by week"
@@ -68,7 +28,7 @@ actions:
 
   # BP
   generate_study_population_bp:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_bp --index-date-range "2019-04-01 to 2022-05-30 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_bp --index-date-range "2022-04-01 to 2022-05-30 by week"
     outputs:
       highly_sensitive:
         bp_cohort: output/input_bp*.csv

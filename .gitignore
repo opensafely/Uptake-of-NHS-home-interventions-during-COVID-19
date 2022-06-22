@@ -10,3 +10,4 @@ venv/
 /output/completed/*.csv
 *.png
 *.xlsx
+metadata/

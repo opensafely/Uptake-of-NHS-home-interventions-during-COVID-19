@@ -41,6 +41,42 @@
       "url": "https://codelists.opensafely.org/codelist/primis-covid19-vacc-uptake/eth2001/v1/",
       "downloaded_at": "2022-04-22 16:05:12.007451Z",
       "sha": "36e4eacba898e6ec72da8ff66e8c673bfd9aa8e4"
+    },
+    "opensafely-hypertension-snomed.csv": {
+      "id": "opensafely/hypertension-snomed/2020-04-28",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/hypertension-snomed/2020-04-28/",
+      "downloaded_at": "2022-06-21 13:34:03.117977Z",
+      "sha": "5d5471bb6a8a01e362b191b3eb8e80c2febeb1da"
+    },
+    "opensafely-type-2-diabetes.csv": {
+      "id": "opensafely/type-2-diabetes/2020-06-29",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/type-2-diabetes/2020-06-29/",
+      "downloaded_at": "2022-06-21 14:25:36.925709Z",
+      "sha": "21a0fd8e041c19abd876970d75b389b6904dc901"
+    },
+    "opensafely-asthma-diagnosis.csv": {
+      "id": "opensafely/asthma-diagnosis/2020-04-15",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/asthma-diagnosis/2020-04-15/",
+      "downloaded_at": "2022-06-21 14:43:48.549194Z",
+      "sha": "722a6ba77a1289a0941cfaa7ce0b9fa32c836f3c"
+    },
+    "opensafely-current-copd.csv": {
+      "id": "opensafely/current-copd/2020-05-06",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/current-copd/2020-05-06/",
+      "downloaded_at": "2022-06-21 15:12:58.460489Z",
+      "sha": "bab838b50e256ceef8b9d2f6ca1132491e522bda"
+    },
+    "opensafely-atrial-fibrillation-or-flutter.csv": {
+      "id": "opensafely/atrial-fibrillation-or-flutter/2020-07-30",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/atrial-fibrillation-or-flutter/2020-07-30/",
+      "downloaded_at": "2022-06-21 15:16:38.512458Z",
+      "sha": "c65b364a34c6f8bd26e7bf835d49812404c41489"
+    },
+    "opensafely-cholesterol-tests-numerical-value.csv": {
+      "id": "opensafely/cholesterol-tests-numerical-value/7e3a22f3",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/cholesterol-tests-numerical-value/7e3a22f3/",
+      "downloaded_at": "2022-06-22 09:44:38.950046Z",
+      "sha": "4e90c401f67eca3a3aa716edea013340a6164f44"
     }
   }
 }
