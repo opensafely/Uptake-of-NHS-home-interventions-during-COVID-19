@@ -33,7 +33,7 @@ study = StudyDefinition(
     ),
     # blood pressure monitoring date
     # Code to loop over bp_codes to find the first match in the period
-    **loop_over_codes(bp_codes, "index_date", "bp"),
+    **loop_over_codes(bp_codes, "index_date"),
     # Loop over the common variables
     **common_variables
 )

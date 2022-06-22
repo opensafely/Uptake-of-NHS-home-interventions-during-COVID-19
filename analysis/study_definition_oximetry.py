@@ -37,7 +37,7 @@ study = StudyDefinition(
     ),
     # pulse oximetry date
     # Code to loop over pulse_oximetry to find the first match in the period
-    **loop_over_codes(pulse_oximetry_codes, "index_date", "oximetry"),
+    **loop_over_codes(pulse_oximetry_codes, "index_date",
     # Loop over the common variables
     **common_variables
 )
