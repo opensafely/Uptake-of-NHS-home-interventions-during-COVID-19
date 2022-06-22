@@ -28,7 +28,7 @@ actions:
 
   # BP
   generate_study_population_bp:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_bp --index-date-range "2022-04-01 to 2022-05-30 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_bp --index-date-range "2019-04-01 to 2022-05-30 by week"
     outputs:
       highly_sensitive:
         bp_cohort: output/input_bp*.csv
