@@ -4,8 +4,10 @@ import random
 from cohortextractor import codelist, patients
 
 
-def make_variable(code: str, index_date: str, title: str, returning: str) -> Dict[str, any]:
-    
+def make_variable(
+    code: str, index_date: str, title: str, returning: str
+) -> Dict[str, any]:
+
     if returning == "binary_flag":
         return_expectations = {"incidence": random.randint(1, 5) / 10}
 
@@ -15,7 +17,6 @@ def make_variable(code: str, index_date: str, title: str, returning: str) -> Dic
             "incidence": 0.5,
         }
 
-    
     return {
         f"{title}_{code}": (
             patients.with_these_clinical_events(
@@ -31,7 +32,10 @@ def make_variable(code: str, index_date: str, title: str, returning: str) -> Dic
 
 
 def loop_over_codes(
-    code_list: List, index_date: str, title: str = "healthcare_at_home", returning: str = "binary_flag"
+    code_list: List,
+    index_date: str,
+    title: str = "healthcare_at_home",
+    returning: str = "binary_flag",
 ) -> Dict[str, any]:
     variables = {}
     for code in code_list:
