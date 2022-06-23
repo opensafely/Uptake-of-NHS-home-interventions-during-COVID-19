@@ -244,5 +244,5 @@ common_variables = dict(
         },
     ),
     # Cholesterol
-    # **loop_over_codes(cholesterol_codes, "index_date", "cholesterol", returning="numeric_value")
+    **loop_over_codes(cholesterol_codes, "index_date", "cholesterol", returning="numeric_value")
 )
