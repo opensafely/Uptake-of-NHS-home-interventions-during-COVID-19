@@ -3,7 +3,7 @@ import sys
 
 if "." not in sys.path:
     sys.path.insert(0, ".")
-from analysis_data_processing import bp_codes_dict, proactive_codes_dict
+
 
 # Pulse oximetry codes from OpenCodelists
 pulse_oximetry_codes = codelist_from_csv(
@@ -11,9 +11,18 @@ pulse_oximetry_codes = codelist_from_csv(
 )
 
 # Blood pressure codes
+# Codes dictionaries: Keys are SNOMED codes, values are the terms they refer to
+bp_codes_dict = {
+    413606001: "Average home systolic blood pressure",
+    314446007: "Average day interval systolic blood pressure",
+    413605002: "Average home diastolic blood pressure",
+    314461008: "Average day interval diastolic blood pressure",
+}
+
 bp_codes = codelist([str(x) for x in list(bp_codes_dict.keys())], system="snomed")
 
 # Proactive care code
+proactive_codes_dict = {934231000000106: "Provision of proactive care"}
 proactive_codes = codelist(
     [str(x) for x in list(proactive_codes_dict.keys())], system="snomed"
 )
@@ -57,4 +66,46 @@ ethnicity_codes = codelist_from_csv(
     system="ctv3",
     column="Code",
     category_column="Grouping_6",
+)
+
+# Hypertension
+hypertension_codes = codelist_from_csv(
+    "codelists/opensafely-hypertension-snomed.csv",
+    system="snomed",
+    column="id",
+)
+
+# diabetes_type_2
+diabetes_type_2_codes = codelist_from_csv(
+    "codelists/opensafely-type-2-diabetes.csv",
+    system="ctv3",
+    column="CTV3ID",
+)
+
+# # asthma
+asthma_codes = codelist_from_csv(
+    "codelists/opensafely-asthma-diagnosis.csv",
+    system="ctv3",
+    column="CTV3ID",
+)
+
+# COPD
+copd_codes = codelist_from_csv(
+    "codelists/opensafely-current-copd.csv",
+    system="ctv3",
+    column="CTV3ID",
+)
+
+# Atrial fibrillation
+atrial_fibrillation_codes = codelist_from_csv(
+    "codelists/opensafely-atrial-fibrillation-or-flutter.csv",
+    system="ctv3",
+    column="CTV3Code",
+)
+
+# Cholesterol
+cholesterol_codes = codelist_from_csv(
+    "codelists/opensafely-cholesterol-tests-numerical-value.csv",
+    system="snomed",
+    column="code",
 )

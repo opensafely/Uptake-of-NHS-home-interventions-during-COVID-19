@@ -10,7 +10,7 @@ study = StudyDefinition(
         "rate": "uniform",
         "incidence": 0.05,
     },
-    index_date="2020-01-01",
+    index_date="2022-06-05",
     population=patients.all(),
     # Ethnicity
     ethnicity=patients.categorised_as(

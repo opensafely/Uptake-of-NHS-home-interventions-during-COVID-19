@@ -7,6 +7,12 @@ metadata/*
 venv/
 .DS_Store
 /output/*.csv
-/output/completed/*.csv
+/output/oximetry/0.1_generate_study_population/*.csv
+/output/oximetry/0.2_join_cohorts/*.csv 
+/output/bp/0.1_generate_study_population/*.csv
+/output/bp/0.2_join_cohorts/*.csv 
+/output/proactive/0.1_generate_study_population/*.csv
+/output/proactive/0.2_join_cohorts/*.csv 
 *.png
 *.xlsx
+metadata/
