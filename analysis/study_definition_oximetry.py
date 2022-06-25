@@ -32,12 +32,11 @@ study = StudyDefinition(
         has_oximetry_code=patients.with_these_clinical_events(
             pulse_oximetry_codes,
             between=["2019-04-01", "2022-06-05"],
-            ignore_missing_values=True,
         ),
     ),
     # pulse oximetry date
     # Code to loop over pulse_oximetry to find the first match in the period
-    **loop_over_codes(pulse_oximetry_codes, "index_date"),
+    **loop_over_codes(pulse_oximetry_codes, "index_date", returning="number_of_matches_in_period"),
     # Loop over the common variables
     **common_variables
 )

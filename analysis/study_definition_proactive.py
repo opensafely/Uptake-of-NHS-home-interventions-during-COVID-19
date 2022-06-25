@@ -35,9 +35,9 @@ study = StudyDefinition(
         ),
     ),
 
-    # proactive care date
-    # Code to loop over proactive_codes to find the first match in the period
-    **loop_over_codes(proactive_codes, "index_date"),
-    # Loop over the common variables
-    **common_variables
+        # proactive care date
+        # Code to loop over proactive_codes to find the first match in the period
+        **loop_over_codes(proactive_codes, "index_date", returning="number_of_matches_in_period"),
+        # Loop over the common variables
+        **common_variables
 )

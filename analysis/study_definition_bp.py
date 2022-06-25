@@ -28,12 +28,12 @@ study = StudyDefinition(
             (imd_quintile != 0)
         """,
         has_bp_code=patients.with_these_clinical_events(
-            bp_codes, between=["2019-04-01", "2022-06-05"], ignore_missing_values=True
+            bp_codes, between=["2019-04-01", "2022-06-05"])
         ),
-    ),
-    # blood pressure monitoring date
-    # Code to loop over bp_codes to find the first match in the period
-    **loop_over_codes(bp_codes, "index_date"),
-    # Loop over the common variables
-    **common_variables
+        
+        # blood pressure monitoring date
+        # Code to loop over bp_codes to find the first match in the period
+        **loop_over_codes(bp_codes, "index_date", returning="number_of_matches_in_period"),
+        # Loop over the common variables
+        **common_variables
 )

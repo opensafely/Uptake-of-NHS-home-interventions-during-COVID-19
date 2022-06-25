@@ -26,7 +26,6 @@ common_variables = dict(
         find_first_match_in_period=True,
         on_or_before="index_date",
         returning="binary_flag",
-        ignore_missing_values=True,
         return_expectations={"incidence": 0.1},
     ),
     # care home
@@ -34,7 +33,6 @@ common_variables = dict(
         care_home_codes,
         find_first_match_in_period=True,
         on_or_before="index_date",
-        ignore_missing_values=True,
         returning="binary_flag",
         return_expectations={"incidence": 0.25},
     ),
@@ -177,8 +175,7 @@ common_variables = dict(
     has_hypertension_code=patients.with_these_clinical_events(
         hypertension_codes,
         on_or_before="index_date",
-        ignore_missing_values=True,
-        return_binary_flag="True",
+        returning ="binary_flag",
         return_expectations={
             "date": {
                 "earliest": "2020-01-15",
@@ -191,8 +188,7 @@ common_variables = dict(
     has_diabetes_type_2_code=patients.with_these_clinical_events(
         diabetes_type_2_codes,
         on_or_before="index_date",
-        ignore_missing_values=True,
-        return_binary_flag="True",
+        returning ="binary_flag",
         return_expectations={
             "date": {
                 "earliest": "2020-01-15",
@@ -205,8 +201,7 @@ common_variables = dict(
     has_asthma_code=patients.with_these_clinical_events(
         asthma_codes,
         on_or_before="index_date",
-        ignore_missing_values=True,
-        return_binary_flag="True",
+        returning ="binary_flag",
         return_expectations={
             "date": {
                 "earliest": "2020-01-15",
@@ -219,8 +214,7 @@ common_variables = dict(
     has_copd_code=patients.with_these_clinical_events(
         copd_codes,
         on_or_before="index_date",
-        ignore_missing_values=True,
-        return_binary_flag="True",
+        returning ="binary_flag",
         return_expectations={
             "date": {
                 "earliest": "2020-01-15",
@@ -233,8 +227,7 @@ common_variables = dict(
     has_atrial_fibrillation_code=patients.with_these_clinical_events(
         atrial_fibrillation_codes,
         on_or_before="index_date",
-        ignore_missing_values=True,
-        return_binary_flag="True",
+        returning ="binary_flag",
         return_expectations={
             "date": {
                 "earliest": "2020-01-15",
