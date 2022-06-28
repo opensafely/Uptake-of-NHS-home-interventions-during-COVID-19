@@ -1,9 +1,12 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
+from analysis_data_processing import homecare_type_dir
 
 
 def produce_plot(
     df: pd.DataFrame,
+    title: str,
     x_label: str = None,
     y_label: str = None,
     figure_size: tuple = (20, 10),
@@ -14,19 +17,16 @@ def produce_plot(
     plt.legend(loc="upper left", bbox_to_anchor=(1.0, 1.0), fontsize=20)
     plt.xlabel(x_label, fontsize=20)
     plt.ylabel(y_label, fontsize=20)
-    plt.title("\n".join(wrap(title)), fontsize=40)
-
+    plt.title(title, fontsize=40)
 
 
 def produce_pivot_plot(
     homecare_type: str,
     counts_df: pd.DataFrame,
     code: str,
-    term: str,
-    column_name: str,
+    variable: str,
     variable_title: str,
     pivot_values: str,
-    reorder_legend: list = None,
 ):
     """Function to create timeseries of code of interest broken down
     by variable of interest"""
@@ -34,33 +34,23 @@ def produce_pivot_plot(
     # Pivot based on column of interest
     pivot_df = counts_df.pivot(
         index="index_date",
-        columns=column_name,
+        columns=variable,
         values=pivot_values,
     )
 
     # Produce plot
-    plot_title = 'Patients with "' + term + '" code, grouped by ' + variable_title
+    plot_title = "Patients with " + " code, grouped by " + variable_title
     produce_plot(pivot_df, plot_title, x_label="Date", y_label="Percentage")
 
-    # Reorder legend if required
-    if reorder_legend is not None:
-        handles, labels = plt.gca().get_legend_handles_labels()
-        plt.legend(
-            [handles[i] for i in reorder_legend],
-            [labels[i] for i in reorder_legend],
-            loc="upper left",
-            bbox_to_anchor=(1.0, 1.0),
-            fontsize=20,
-        )
-
     # Save plot
+    dirs = homecare_type_dir(homecare_type)
     plt.savefig(
-        "output/"
+        dirs["output_dir"]
         + homecare_type
         + "_plot_code_"
         + code
         + "_"
-        + column_name
+        + variable
         + "_timeseries.png",
         bbox_inches="tight",
     )

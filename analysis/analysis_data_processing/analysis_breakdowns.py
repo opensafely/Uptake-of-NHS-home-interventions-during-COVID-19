@@ -1,5 +1,6 @@
 from os import strerror
 import numpy as np
+import pandas as pd
 from analysis_data_processing import create_population_df, homecare_type_dir
 from plot import *
 from redaction import *
@@ -91,8 +92,8 @@ def code_time_analysis(
     homecare_type: str,
     code: str,
     variable: str,
+    variable_title,
     population_df: pd.DataFrame,
-    variable_title: str = None,
 ):
     """Function to take a pulse oximetry code and save the timeseries and
     its underlying table, grouped by a specific column"""
@@ -103,94 +104,31 @@ def code_time_analysis(
     codes_df = population_df.loc[population_df[f"healthcare_at_home_{code}"] > 0]
 
     # Count the number of patients in each group for each index date
-    summary_df = codes_df.groupby(["index_date", variable])["patient_id"].nunique()
-    summary_df.rename(columns={0: "counts"}, inplace=True)
+    summary_df = (
+        codes_df.groupby(["index_date", variable])["patient_id"].nunique().reset_index()
+    )
+    summary_df.rename(columns={"patient_id": "number_of_patients"}, inplace=True)
 
     # Add denominators and percentages, change dataframe to monthly and redact and round
     # counts_df = create_monthly_counts_table(codes_df, counts_df, column_name)
 
     # Save the dataframe in outputs folder
     summary_df.to_csv(
-        dirs["output_dir"],
-        + homecare_type
-        + "_table_code_"
-        + code
-        + "_"
-        + variable
-        + "_counts.csv"
+        f"""{dirs["output_dir"]}{homecare_type}_table_code_code_{variable}_counts.csv"""
     )
 
     # Produce the required timeseries
-    # produce_pivot_plot(
-    #     homecare_type, summary_df, code, variable, variable_title, "percentage"
-    # )
+    produce_pivot_plot(
+        homecare_type,
+        summary_df,
+        code,
+        variable,
+        variable_title,
+        "number_of_patients",
+    )
 
 
-# def age_and_shielding_breakdown(
-#     homecare_type: str,
-#     codes_dict: dict,
-#     population_df: pd.DataFrame,
-#     codes_of_interest: dict,
-# ):
-#     """Function to create breakdown by age combined with shielding status"""
-#     for code in codes_of_interest:
-
-#         # Find the term associated with the code
-#         term = codes_dict[int(code)]
-
-#         # Population of interest is all patients with the code
-#         codes_df = population_df.loc[population_df[term] == 1]
-
-#         # Count the number of patients in each age_and_shielding group for each
-#         # index date
-#         counts_df = (
-#             codes_df.groupby(["index_date", "age_and_shielding"]).size().reset_index()
-#         )
-#         counts_df.rename(columns={0: "counts"}, inplace=True)
-
-#         # Add denominators and percentages, change dataframe to monthly and redact and round
-#         counts_df = create_monthly_counts_table(
-#             codes_df, counts_df, column_name="age_and_shielding"
-#         )
-
-#         # Create column containing labels for cumulative percentages
-#         counts_df = age_and_shielding_cumulative_labels(counts_df)
-
-#         # Create column of cumulative percentages based on age and shielding status
-#         # for each index date
-#         counts_df["cumulative_age_and_shielding_percentages"] = np.nan
-#         for index_date in counts_df.index_date.unique():
-#             counts_df["cumulative_age_and_shielding_percentages"][
-#                 counts_df["index_date"] == index_date
-#             ] = counts_df["percentage"][counts_df["index_date"] == index_date].cumsum()
-
-#         # Save the dataframe in outputs folder
-#         counts_df.to_csv(
-#             "output/"
-#             + homecare_type
-#             + "_table_code_"
-#             + code
-#             + "_cumulative_age_and_shielding_counts.csv"
-#         )
-
-#         # Produce the required timeseries
-#         produce_pivot_plot(
-#             homecare_type,
-#             counts_df,
-#             code,
-#             term,
-#             "cumulative_age_and_shielding",
-#             "age and shielding status",
-#             "cumulative_age_and_shielding_percentages",
-#             [0, 2, 3, 1],
-#         )
-
-
-
-
-def analysis_breakdowns(
-    homecare_type: str, codes_dict: dict, codes_of_interest, dir: str
-):
+def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
     """Function to run analysis of timeseries broken down by
     age category, shielding status, sex, IMD decile, ethnicity,
     care home residency and age_plus_shielding_status
@@ -226,19 +164,19 @@ def analysis_breakdowns(
         "age_group": "age",
         "ethnicity": "ethnicity",
         "imd_quintile": "IMD quintile (1 = most deprived, 5 = least deprived)",
+        "age_and_shielding": "age and shielding flag",
+        "rural_urban_classification": "rural classification",
+        "has_hypertension_code": "hypertension",
+        "has_diabetes_type_2_code": "diabetes type 2",
+        "has_asthma_code": "asthma",
+        "has_copd_code": "copd",
+        "has_atrial_fibrillation_code": "artial_fibrillation",
     }
 
     # Create timeseries for the codes broken down by the variables of interest
     for code in codes_of_interest:
         for variable, title in variable_and_title.items():
-            code_time_analysis(
-                homecare_type, code, variable, population_df, codes_dict, title
-            )
-
-    # Create timeseries for specific codes broken down by age and shielding status
-    age_and_shielding_breakdown(
-        homecare_type, codes_dict, population_df, codes_of_interest
-    )
+            code_time_analysis(homecare_type, code, variable, title, population_df)
 
 
 # def analysis_region(homecare_type: str, headers_dict: dict):
@@ -246,7 +184,7 @@ def analysis_breakdowns(
 
 #     # Create population data frame which includes all weeks and dictionary of
 #     # cohort size for each individual week
-#     population_df, cohort_size = create_population_df(homecare_type)
+#     population_df = create_population_df(homecare_type)
 
 #     # Create list of regions in the data
 #     region_list = population_df["region"].unique()
@@ -310,4 +248,6 @@ def analysis_timeseries(homecare_type: str, dir: str):
     title = homecare_title(homecare_type)
     sum_df.set_index("index_date", inplace=True)
     produce_plot(sum_df, "Use of " + title + " Over Time", "Date")
-    plt.savefig(dirs["output_dir"] + homecare_type + "_plot_timeseries", bbox_inches="tight")
+    plt.savefig(
+        dirs["output_dir"] + homecare_type + "_plot_timeseries", bbox_inches="tight"
+    )

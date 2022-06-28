@@ -26,6 +26,8 @@ def create_population_df(homecare_type: str, dir: str) -> pd.DataFrame:
     # append the directory path to filename
     filepaths_dir = [dir + filepath for filepath in filepaths]
 
+    filepaths_dir
+
     # create empty list to append dataframes
     dfs = []
 
@@ -34,7 +36,7 @@ def create_population_df(homecare_type: str, dir: str) -> pd.DataFrame:
         output = pd.read_csv(file)
         # Add the index date to the file by extracting index from filename
         output["index_date"] = pd.to_datetime(
-            file.split("_",)[2].split(
+            file.split("_",)[4].split(
                 ".csv"
             )[0],
             dayfirst=True,
@@ -48,53 +50,53 @@ def create_population_df(homecare_type: str, dir: str) -> pd.DataFrame:
     return population_df
 
 
-# def convert_weekly_to_monthly(
-#     counts_table: pd.DataFrame, column_name: str
-# ) -> pd.DataFrame:
-#     """Converts a counts table of practice-level weekly counts to counts aggregated
-#     every 4 weeks. Where the number of weeks is not divisible by 4, the earliest weeks
-#     are dropped to ensure number of weeks is a multiple of 4.
-#     """
+def convert_weekly_to_monthly(
+    counts_table: pd.DataFrame, column_name: str
+) -> pd.DataFrame:
+    """Converts a counts table of practice-level weekly counts to counts aggregated
+    every 4 weeks. Where the number of weeks is not divisible by 4, the earliest weeks
+    are dropped to ensure number of weeks is a multiple of 4.
+    """
 
-#     dates = counts_table["index_date"].sort_values(ascending=True).unique()
+    dates = counts_table["index_date"].sort_values(ascending=True).unique()
 
-#     # drop earliest weeks if number of weeks not a multiple of 4.
-#     num_dates = len(dates)
-#     num_dates_over = num_dates % 4
-#     if num_dates_over != 0:
-#         # drop rows from counts table
-#         counts_table = counts_table.loc[
-#             ~counts_table["index_date"].isin(dates[0:num_dates_over]),
-#             counts_table.columns,
-#         ]
+    # drop earliest weeks if number of weeks not a multiple of 4.
+    num_dates = len(dates)
+    num_dates_over = num_dates % 4
+    if num_dates_over != 0:
+        # drop rows from counts table
+        counts_table = counts_table.loc[
+            ~counts_table["index_date"].isin(dates[0:num_dates_over]),
+            counts_table.columns,
+        ]
 
-#         # drop dates from dates list
-#         dates = dates[num_dates_over:]
+        # drop dates from dates list
+        dates = dates[num_dates_over:]
 
-#     # create 4 weekly date
-#     dates_map = {}
-#     for i in range(0, len(dates), 4):
-#         date_group = dates[i : i + 4]
-#         for date in date_group:
-#             dates_map[date] = date_group[0]
-#     counts_table.loc[counts_table.index, "index_date"] = counts_table.loc[
-#         counts_table.index, "index_date"
-#     ].map(dates_map)
+    # create 4 weekly date
+    dates_map = {}
+    for i in range(0, len(dates), 4):
+        date_group = dates[i : i + 4]
+        for date in date_group:
+            dates_map[date] = date_group[0]
+    counts_table.loc[counts_table.index, "index_date"] = counts_table.loc[
+        counts_table.index, "index_date"
+    ].map(dates_map)
 
-#     # group into 4 weeks
-#     counts_table = (
-#         (
-#             counts_table.groupby(by=[column_name, "index_date"])[
-#                 ["counts", "denominators"]
-#             ]
-#             .sum()
-#             .reset_index()
-#         )
-#         .sort_values(by=["index_date"])
-#         .reset_index(drop=True)
-#     )
+    # group into 4 weeks
+    counts_table = (
+        (
+            counts_table.groupby(by=[column_name, "index_date"])[
+                ["counts", "denominators"]
+            ]
+            .sum()
+            .reset_index()
+        )
+        .sort_values(by=["index_date"])
+        .reset_index(drop=True)
+    )
 
-#     return counts_table
+    return counts_table
 
 
 # def create_monthly_counts_table(
@@ -142,7 +144,8 @@ def create_population_df(homecare_type: str, dir: str) -> pd.DataFrame:
 #     return counts_df
 
 
-def homecare_type_dir(homecare_type: str) -> Dict[str,str]:
-        return dict(input_dir = "output/{homecare_type}/0.2_join_cohorts/", output_dir="output/{homecare_type}/0.3_analysis_outputs/")
-
-
+def homecare_type_dir(homecare_type: str) -> Dict[str, str]:
+    return dict(
+        input_dir=f"../../output/{homecare_type}/0.2_join_cohorts/",
+        output_dir=f"../../output/{homecare_type}/0.3_analysis_outputs/",
+    )
