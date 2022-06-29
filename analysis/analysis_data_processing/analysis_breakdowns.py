@@ -44,7 +44,7 @@ def code_time_analysis(
     summary_df = (
         codes_df.groupby(["index_date", variable])["patient_id"].nunique().reset_index()
     )
-    summary_df.rename(columns={"patient_id": "number_of_patients"}, inplace=True)
+    summary_df.rename(columns={"patient_id": "counts"}, inplace=True)
 
     # Add denominators and percentages, change dataframe to monthly and redact and round
     summary_df = create_monthly_counts_table(codes_df, summary_df, variable)
@@ -61,7 +61,7 @@ def code_time_analysis(
         code,
         variable,
         variable_title,
-        "number_of_patients",
+        "counts",
     )
 
 
