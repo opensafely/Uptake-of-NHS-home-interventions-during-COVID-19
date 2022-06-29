@@ -168,22 +168,24 @@ def analysis_region(homecare_type: str, codes: list):
             pass
 
 
-def analysis_timeseries(homecare_type: str):
+def analysis_timeseries(homecare_type: str, codes: list):
     """Function to produce timeseries plot"""
 
     dirs = homecare_type_dir(homecare_type)
+
+    codes = ["healthcare_at_home_" + s for s in codes]
 
     # Create population dataframe which includes all weeks and dictionary of
     # cohort size for each individual week
     population_df = create_population_df(homecare_type, dirs["input_dir"])
 
     # Create dataframe of sum totals for each index date
-    sum_df = population_df.groupby("index_date")["patient_id"].nunique().to_frame()
+    sum_df = population_df.groupby(["index_date"], as_index=False)[codes].sum()
     # Redact values less than or equal to 5 and round all other values up to
     # nearest 5
     sum_df = redact_and_round_df(sum_df)
 
-    # Save the dataframe in outputs folder
+    # Save the dataframe in outputs folders
     sum_df.to_csv(dirs["output_dir"] + homecare_type + "_table_counts.csv")
 
     # Create timeseries of codes usage

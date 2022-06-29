@@ -132,4 +132,3 @@ def further_redaction(counts_df: pd.DataFrame, column_name: str) -> pd.DataFrame
             # Update counts dataframe with extra redaction
             counts_df.update(temp_df)
     return counts_df
-

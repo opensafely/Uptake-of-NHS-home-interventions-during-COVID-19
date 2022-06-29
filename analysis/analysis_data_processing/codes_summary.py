@@ -26,12 +26,7 @@ def number_of_uses_of_code(homecare_type: str, df: pd.DataFrame):
         )
         # Round and redact dataframe and save to csv
         redact_and_round_df(code_summary_df).to_csv(
-            dirs["output_dir"]
-            + homecare_type
-            + "_table_code_counts_"
-            + i
-            + code
-            + ".csv"
+            f"""{dirs["output_dir"]}{homecare_type}_table_code_counts_{i}_{code}.csv"""
         )
         i = i + 1
 
@@ -68,6 +63,26 @@ def code_combinations(
     )
 
 
+def code_population(homecare_type: str, df: pd.DataFrame, codes: str):
+
+    dirs = homecare_type_dir(homecare_type)
+
+    i = 1
+    for code in codes:
+        code_summary = df[df[code] > 0]
+        code_summary = code_summary.groupby(["index_date"])["patient_id"].nunique()
+        code_summary_df = pd.DataFrame(code_summary)
+        code_summary_df.rename(
+            columns={"patient_id": "Total number of patients"},
+            inplace=True,
+        )
+        # Round and redact dataframe and save to csv
+        redact_and_round_df(code_summary_df).to_csv(
+            f"""{dirs["output_dir"]}{homecare_type}_patient_id_total_{i}_{code}.csv"""
+        )
+        i = i + 1
+
+
 def code_analysis(homecare_type: str, codes: list):
     """Function to summarise how many times patients received each code over the
     entire time period and how many times each possible combination of codes occured"""
@@ -83,7 +98,9 @@ def code_analysis(homecare_type: str, codes: list):
     patient_codes = population_df.groupby("patient_id")[codes].sum().reset_index()
 
     # Summarise number of uses of each code for each patient
-    number_of_uses_of_code(homecare_type, codes, patient_codes)
+    number_of_uses_of_code(homecare_type, patient_codes)
 
     # Summarise all code combinations used over time period
     code_combinations(homecare_type, patient_codes)
+
+    code_population(homecare_type, population_df, codes)
