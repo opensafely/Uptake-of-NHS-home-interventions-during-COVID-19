@@ -4,10 +4,9 @@ import sys
 
 if "." not in sys.path:
     sys.path.insert(0, ".")
-from analysis_data_processing import proactive_headers_dict
-from analysis_functions import analysis_region
+from analysis.analysis_data_processing.analysis_breakdowns import analysis_region
+from analysis.codelist import proactive_codes
 
 homecare_type = "proactive"
-headers_dict = proactive_headers_dict
 
-analysis_region(homecare_type, headers_dict)
+analysis_region(homecare_type, proactive_codes)
