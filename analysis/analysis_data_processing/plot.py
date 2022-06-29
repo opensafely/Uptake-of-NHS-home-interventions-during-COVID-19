@@ -1,7 +1,11 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-from analysis_data_processing import homecare_type_dir
+import sys
+
+if "." not in sys.path:
+    sys.path.insert(0, ".")
+from analysis.analysis_data_processing.analysis_data_processing import homecare_type_dir
 
 
 def produce_plot(

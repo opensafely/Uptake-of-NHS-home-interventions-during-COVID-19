@@ -4,10 +4,9 @@ import sys
 
 if "." not in sys.path:
     sys.path.insert(0, ".")
-from analysis_data_processing import oximetry_headers_dict
-from analysis_functions import code_analysis
+from analysis.analysis_data_processing.codes_summary import code_analysis
+from analysis.codelist import pulse_oximetry_codes
 
 homecare_type = "oximetry"
-headers_dict = oximetry_headers_dict
 
-code_analysis(homecare_type, headers_dict)
+code_analysis(homecare_type, pulse_oximetry_codes)

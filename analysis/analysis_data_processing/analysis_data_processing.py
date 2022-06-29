@@ -5,12 +5,11 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 from textwrap import wrap
-from redaction import *
+import sys
 
-
-# ============================================================================================
-# Functions
-# ============================================================================================
+if "." not in sys.path:
+    sys.path.insert(0, ".")
+from analysis.analysis_data_processing.redaction import *
 
 
 def create_population_df(homecare_type: str, dir: str) -> pd.DataFrame:
@@ -99,53 +98,56 @@ def convert_weekly_to_monthly(
     return counts_table
 
 
-# def create_monthly_counts_table(
-#     codes_df: pd.DataFrame,
-#     counts_df: pd.DataFrame,
-#     column_name: str,
-# ) -> pd.DataFrame:
-#     """Function to take a weekly counts dataframe,
-#     change it to monthly, apply redacting and rounding
-#     and add denominators and percentages"""
+def create_monthly_counts_table(
+    codes_df: pd.DataFrame,
+    counts_df: pd.DataFrame,
+    column_name: str,
+) -> pd.DataFrame:
+    """Function to take a weekly counts dataframe,
+    change it to monthly, apply redacting and rounding
+    and add denominators and percentages"""
 
-#     # Denominator is total cohort size for that index date
-#     counts_df["denominators"] = counts_df["index_date"].map(
-#         (codes_df.groupby("index_date").size()).to_dict()
-#     )
+    # Denominator is total cohort size for that index date
+    counts_df["denominators"] = counts_df["index_date"].map(
+        (codes_df.groupby("index_date").size()).to_dict()
+    )
 
-#     # Round the weekly denominators up to nearest 5
-#     for i, row in counts_df.iterrows():
-#         counts_df.at[i, "denominators"] = int(
-#             5 * math.ceil(float(counts_df.loc[i, "denominators"]) / 5)
-#         )
+    # Round the weekly denominators up to nearest 5
+    for i, row in counts_df.iterrows():
+        counts_df.at[i, "denominators"] = int(
+            5 * math.ceil(float(counts_df.loc[i, "denominators"]) / 5)
+        )
 
-#     # Convert to monthly table
-#     counts_df = convert_weekly_to_monthly(counts_df, column_name)
+    # Convert to monthly table
+    counts_df = convert_weekly_to_monthly(counts_df, column_name)
 
-#     # Exclude denominators which are less than 100 (higher variation will make
-#     # timeseries less meaningful)
-#     counts_df["denominators"][counts_df["denominators"] <= 100] = "Less than 100"
+    # Exclude denominators which are less than 100 (higher variation will make
+    # timeseries less meaningful)
+    counts_df["denominators"][counts_df["denominators"] <= 100] = "Less than 100"
 
-#     # Apply redacting and rounding to the counts
-#     if column_name == "age_and_shielding":
-#         counts_df["counts"] = redact_and_round_column(counts_df["counts"])
-#         counts_df = further_redaction_all(counts_df, "counts")
-#     else:
-#         counts_df = redact_to_five_and_round(counts_df, "counts")
+    # Apply redacting and rounding to the counts
+    if column_name == "age_and_shielding":
+        counts_df["counts"] = redact_and_round_column(counts_df["counts"])
+        counts_df = further_redaction_all(counts_df, "counts")
+    else:
+        counts_df = redact_to_five_and_round(counts_df, "counts")
 
-#     # Calculate the percentages
-#     counts_df["percentage"] = round(
-#         pd.to_numeric(counts_df["counts"], errors="coerce")
-#         / pd.to_numeric(counts_df["denominators"], errors="coerce")
-#         * 100,
-#         1,
-#     )
+    # Calculate the percentages
+    counts_df["percentage"] = round(
+        pd.to_numeric(counts_df["counts"], errors="coerce")
+        / pd.to_numeric(counts_df["denominators"], errors="coerce")
+        * 100,
+        1,
+    )
 
-#     return counts_df
+    return counts_df
 
 
 def homecare_type_dir(homecare_type: str) -> Dict[str, str]:
+    """Function to return a dictionary containing the input directory
+    (location of the relevant input csv files) and output directory (where to
+    store the analysis outputs) for a specific homecare type"""
     return dict(
-        input_dir=f"../../output/{homecare_type}/0.2_join_cohorts/",
-        output_dir=f"../../output/{homecare_type}/0.3_analysis_outputs/",
+        input_dir=f"output/{homecare_type}/0.2_join_cohorts/",
+        output_dir=f"output/{homecare_type}/0.3_analysis_outputs/",
     )

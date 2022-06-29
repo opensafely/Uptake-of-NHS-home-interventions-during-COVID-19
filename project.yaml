@@ -13,7 +13,7 @@ actions:
 
   # Oximetry
   generate_study_population_oximetry:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_oximetry --index-date-range "2019-04-01 to 2022-05-30 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_oximetry --index-date-range "2021-11-01 to 2021-12-28 by week"
     outputs:
       highly_sensitive:
         oximetry_cohort: output/oximetry/0.1_generate_study_population/input_oximetry*.csv
@@ -28,7 +28,7 @@ actions:
 
   # BP
   generate_study_population_bp:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_bp --index-date-range "2019-04-01 to 2022-05-30 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_bp --index-date-range "2021-11-01 to 2021-12-28 by week"
     outputs:
       highly_sensitive:
         bp_cohort: output/bp/0.1_generate_study_population/input_bp*.csv
@@ -42,7 +42,7 @@ actions:
 
   # Proactive
   generate_study_population_proactive:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_proactive --index-date-range "2019-04-01 to 2022-05-30 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_proactive --index-date-range "2021-11-01 to 2021-12-28 by week"
     outputs:
       highly_sensitive:
         proactive_cohort: output/proactive/0.1_generate_study_population/input_proactive*.csv
@@ -54,105 +54,103 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/proactive/0.2_join_cohorts/input_proactive*.csv
-  # # Analysis
+
+  # Analysis
+
+  # Oximetry
   # generate_oximetry_timeseries:
   #   run: python:latest python analysis/analysis_oximetry_timeseries.py
   #   needs: [join_cohorts_oximetry]
   #   outputs:
   #     moderately_sensitive:
-  #       oximetry_table_counts: output/oximetry_table_counts.csv
-  #       oximetry_plot_timeseries: output/oximetry_plot_timeseries.png
-  # generate_oximetry_regional_timeseries:
-  #   run: python:latest python analysis/analysis_oximetry_region.py
-  #   needs: [join_cohorts_oximetry]
-  #   outputs:
-  #     moderately_sensitive:
-  #       oximetry_table_counts_region: output/oximetry_table_counts_*.csv
-  #       oximetry_plot_timeseries_region: output/oximetry_plot_timeseries_region_*.png
+  #       oximetry_table_counts: output/oximetry/0.3_analysis_outputs/oximetry_table_counts.csv
+  #       oximetry_plot_timeseries: output/oximetry/0.3_analysis_outputs/oximetry_plot_timeseries.png
+
+  generate_oximetry_regional_timeseries:
+    run: python:latest python analysis/analysis_oximetry_region.py
+    needs: [join_cohorts_oximetry]
+    outputs:
+      moderately_sensitive:
+        oximetry_table_counts_region: output/oximetry/0.3_analysis_outputs/oximetry_table_counts_*.csv
+        oximetry_plot_timeseries_region: output/oximetry/0.3_analysis_outputs/oximetry_plot_timeseries_region_*.png
+
   # generate_oximetry_breakdowns:
   #   run: python:latest python analysis/analysis_oximetry_breakdowns.py
   #   needs: [join_cohorts_oximetry]
   #   outputs:
   #     moderately_sensitive:
-  #       oximetry_table_breakdowns: output/oximetry_table_code_*.csv
-  #       oximetry_plot_breakdowns: output/oximetry_plot_code_*.png
+  #       oximetry_table_breakdowns: output/oximetry/0.3_analysis_outputs/oximetry_table_code_*.csv
+  #       oximetry_plot_breakdowns: output/oximetry/0.3_analysis_outputs/oximetry_plot_code_*.png
+
   # generate_oximetry_codes_analysis:
   #   run: python:latest python analysis/analysis_oximetry_codes.py
   #   needs: [join_cohorts_oximetry]
   #   outputs:
   #     moderately_sensitive:
-  #       oximetry_table_code_counts: output/oximetry_table_code_counts_*.csv
-  #       oximetry_table_code_combinations: output/oximetry_table_code_combinations.csv
-  # generate_oximetry_no_codes_analysis:
-  #   run: python:latest python analysis/analysis_oximetry_no_codes.py
-  #   needs: [join_cohorts_oximetry]
-  #   outputs:
-  #     moderately_sensitive:
-  #       oximetry_table_no_codes_used: output/oximetry_table_no_codes_used.csv
+  #       oximetry_table_code_counts: output/oximetry/0.3_analysis_outputs/oximetry_table_code_counts_*.csv
+  #       oximetry_table_code_combinations: output/oximetry/0.3_analysis_outputs/oximetry_table_code_combinations.csv
+
+  # Blood pressure
   # generate_bp_timeseries:
   #   run: python:latest python analysis/analysis_bp_timeseries.py
   #   needs: [join_cohorts_bp]
   #   outputs:
   #     moderately_sensitive:
-  #       bp_table_counts: output/bp_table_counts.csv
-  #       bp_plot_timeseries: output/bp_plot_timeseries.png
-  # generate_bp_regional_timeseries:
-  #   run: python:latest python analysis/analysis_bp_region.py
-  #   needs: [join_cohorts_bp]
-  #   outputs:
-  #     moderately_sensitive:
-  #       bp_table_counts_region: output/bp_table_counts_*.csv
-  #       bp_plot_timeseries_region: output/bp_plot_timeseries_region_*.png
+  #       bp_table_counts: output/bp/0.3_analysis_outputs/bp_table_counts.csv
+  #       bp_plot_timeseries: output/bp/0.3_analysis_outputs/bp_plot_timeseries.png
+
+  generate_bp_regional_timeseries:
+    run: python:latest python analysis/analysis_bp_region.py
+    needs: [join_cohorts_bp]
+    outputs:
+      moderately_sensitive:
+        bp_table_counts_region: output/bp/0.3_analysis_outputs/bp_table_counts_*.csv
+        bp_plot_timeseries_region: output/bp/0.3_analysis_outputs/bp_plot_timeseries_region_*.png
+
   # generate_bp_breakdowns:
   #   run: python:latest python analysis/analysis_bp_breakdowns.py
   #   needs: [join_cohorts_bp]
   #   outputs:
   #     moderately_sensitive:
-  #       bp_table_breakdowns: output/bp_table_code_*.csv
-  #       bp_plot_breakdowns: output/bp_plot_code_*.png
+  #       bp_table_breakdowns: output/bp/0.3_analysis_outputs/bp_table_code_*.csv
+  #       bp_plot_breakdowns: output/bp/0.3_analysis_outputs/bp_plot_code_*.png
+
   # generate_bp_codes_analysis:
   #   run: python:latest python analysis/analysis_bp_codes.py
   #   needs: [join_cohorts_bp]
   #   outputs:
   #     moderately_sensitive:
-  #       bp_table_code_counts: output/bp_table_code_counts_*.csv
-  #       bp_table_code_combinations: output/bp_table_code_combinations.csv
-  # generate_bp_no_codes_analysis:
-  #   run: python:latest python analysis/analysis_bp_no_codes.py
-  #   needs: [join_cohorts_bp]
-  #   outputs:
-  #     moderately_sensitive:
-  #       bp_table_no_codes_used: output/bp_table_no_codes_used.csv
+  #       bp_table_code_counts: output/bp/0.3_analysis_outputs/bp_table_code_counts_*.csv
+  #       bp_table_code_combinations: output/bp/0.3_analysis_outputs/bp_table_code_combinations.csv
+
+  # Proactive Care
   # generate_proactive_timeseries:
   #   run: python:latest python analysis/analysis_proactive_timeseries.py
   #   needs: [join_cohorts_proactive]
   #   outputs:
   #     moderately_sensitive:
-  #       proactive_table_counts: output/proactive_table_counts.csv
-  #       proactive_plot_timeseries: output/proactive_plot_timeseries.png
-  # generate_proactive_regional_timeseries:
-  #   run: python:latest python analysis/analysis_proactive_region.py
-  #   needs: [join_cohorts_proactive]
-  #   outputs:
-  #     moderately_sensitive:
-  #       proactive_table_counts_region: output/proactive_table_counts_*.csv
-  #       proactive_plot_timeseries_region: output/proactive_plot_timeseries_region_*.png
+  #       proactive_table_counts: output/proactive/0.3_analysis_outputs/proactive_table_counts.csv
+  #       proactive_plot_timeseries: output/proactive/0.3_analysis_outputs/proactive_plot_timeseries.png
+
+  generate_proactive_regional_timeseries:
+    run: python:latest python analysis/analysis_proactive_region.py
+    needs: [join_cohorts_proactive]
+    outputs:
+      moderately_sensitive:
+        proactive_table_counts_region: output/proactive/0.3_analysis_outputs/proactive_table_counts_*.csv
+        proactive_plot_timeseries_region: output/proactive/0.3_analysis_outputs/proactive_plot_timeseries_region_*.png
+
   # generate_proactive_breakdowns:
   #   run: python:latest python analysis/analysis_proactive_breakdowns.py
   #   needs: [join_cohorts_proactive]
   #   outputs:
   #     moderately_sensitive:
-  #       proactive_table_breakdowns: output/proactive_table_code_*.csv
-  #       proactive_plot_breakdowns: output/proactive_plot_code_*.png
+  #       proactive_table_breakdowns: output/proactive/0.3_analysis_outputs/proactive_table_code_*.csv
+  #       proactive_plot_breakdowns: output/proactive/0.3_analysis_outputs/proactive_plot_code_*.png
+
   # generate_proactive_codes_analysis:
   #   run: python:latest python analysis/analysis_proactive_codes.py
   #   needs: [join_cohorts_proactive]
   #   outputs:
   #     moderately_sensitive:
-  #       proactive_table_code_counts: output/proactive_table_code_counts_*.csv
-  # generate_proactive_no_codes_analysis:
-  #   run: python:latest python analysis/analysis_proactive_no_codes.py
-  #   needs: [join_cohorts_proactive]
-  #   outputs:
-  #     moderately_sensitive:
-  #       proactive_table_no_codes_used: output/proactive_table_no_codes_used.csv
+  #       proactive_table_code_counts: output/proactive/0.3_analysis_outputs/proactive_table_code_counts_*.csv

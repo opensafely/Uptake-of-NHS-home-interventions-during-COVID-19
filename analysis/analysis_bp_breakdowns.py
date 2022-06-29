@@ -5,13 +5,11 @@ import sys
 
 if "." not in sys.path:
     sys.path.insert(0, ".")
-from analysis_data_processing import bp_codes_dict
-from analysis_functions import analysis_breakdowns
+from analysis.analysis_data_processing.analysis_breakdowns import analysis_breakdowns
+from analysis.codelist import bp_codes
 
 
 homecare_type = "bp"
-codes_dict = bp_codes_dict
-# Codes_of_interest is a list of blood pressure monitoring codes as strings
-codes_of_interest = [str(x) for x in list(bp_codes_dict.keys())]
+codes_of_interest = bp_codes
 
-analysis_breakdowns(homecare_type, codes_dict, codes_of_interest)
+analysis_breakdowns(homecare_type, codes_of_interest)

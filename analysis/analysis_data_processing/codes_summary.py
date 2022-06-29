@@ -1,7 +1,13 @@
 import pandas as pd
+import sys
 
-from analysis_data_processing import create_population_df, homecare_type_dir
-from redaction import redact_and_round_df
+if "." not in sys.path:
+    sys.path.insert(0, ".")
+from analysis.analysis_data_processing.analysis_data_processing import (
+    create_population_df,
+    homecare_type_dir,
+)
+from analysis.analysis_data_processing.redaction import redact_and_round_df
 
 
 def number_of_uses_of_code(homecare_type: str, df: pd.DataFrame):
