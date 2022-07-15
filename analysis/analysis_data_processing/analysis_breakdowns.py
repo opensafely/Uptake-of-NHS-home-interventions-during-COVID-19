@@ -6,6 +6,7 @@ import sys
 if "." not in sys.path:
     sys.path.insert(0, ".")
 from analysis.analysis_data_processing.analysis_data_processing import (
+    create_headers_dict,
     create_population_df,
     homecare_type_dir,
     create_monthly_counts_table,
@@ -27,7 +28,7 @@ def add_age_category(population_df: pd.DataFrame) -> pd.DataFrame:
 
 def code_time_analysis(
     homecare_type: str,
-    code: str,
+    term: str,
     variable: str,
     variable_title,
     population_df: pd.DataFrame,
@@ -38,7 +39,7 @@ def code_time_analysis(
     dirs = homecare_type_dir(homecare_type)
 
     # Population of interest is all patients with the code
-    codes_df = population_df.loc[population_df[f"healthcare_at_home_{code}"] > 0]
+    codes_df = population_df.loc[population_df[term] > 0]
 
     # Count the number of patients in each group for each index date
     summary_df = (
@@ -51,17 +52,17 @@ def code_time_analysis(
 
     # Save the dataframe in outputs folder
     summary_df.to_csv(
-        f"""{dirs["output_dir"]}{homecare_type}_table_code_{code}_{variable}_counts.csv"""
+        f"""{dirs["output_dir"]}{homecare_type}_table_code_term_{variable}_counts.csv"""
     )
 
     # Produce the required timeseries
     produce_pivot_plot(
         homecare_type,
         summary_df,
-        code,
+        term,
         variable,
         variable_title,
-        "counts",
+        "percentage",
     )
 
 
@@ -72,6 +73,7 @@ def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
     for codes of interest"""
 
     dirs = homecare_type_dir(homecare_type)
+    headers_dict = create_headers_dict(homecare_type)
 
     # Create population data frame which includes all weeks and dictionary of
     population_df = create_population_df(homecare_type, dirs["input_dir"])
@@ -80,14 +82,27 @@ def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
     population_df = add_age_category(population_df)
 
     # Replace binary flags and abbreviations with meaningful values
-    population_df["care_home"] = population_df["care_home"].replace(
-        to_replace=[1, 0], value=["Care home resident", "Not a care home resident"]
-    )
-    population_df["sex"] = population_df["sex"].replace(
-        to_replace=["M", "F"], value=["Male", "Female"]
-    )
-    population_df["shielding"] = population_df["shielding"].replace(
-        to_replace=[1, 0], value=["Shielding", "Not shielding"]
+    population_df = population_df.replace(
+        {
+            "sex": {"M": "Male", "F": "Female", "I": "Intersex", "U": "Unknown"},
+            "care_home": {0: "Not a care home resident", 1: "Care home resident"},
+            "shielding": {0: "Shielding", 1: "Not shielding"},
+            "rural_urban_classification": {"rural": "Rural", "urban": "Urban"},
+            "has_hypertension_code": {
+                0: "Does not have hypertension",
+                1: "Has hypertension",
+            },
+            "has_diabetes_type_2_code": {
+                0: "Does not have type 2 diabetes",
+                1: "Has type 2 diabetes",
+            },
+            "has_asthma_code": {0: "Does not have asthma", 1: "Has asthma"},
+            "has_copd_code": {0: "Does not have COPD", 1: "Has COPD"},
+            "has_atrial_fibrillation_code": {
+                0: "Does not have atrial fibrillation",
+                1: "Has atrial fibrillation",
+            },
+        }
     )
 
     # Define variables of interest and corresponding plot titles
@@ -98,26 +113,27 @@ def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
         "age_group": "age",
         "ethnicity": "ethnicity",
         "imd_quintile": "IMD quintile (1 = most deprived, 5 = least deprived)",
-        "rural_urban_classification": "rural classification",
-        "has_hypertension_code": "hypertension",
-        "has_diabetes_type_2_code": "diabetes type 2",
-        "has_asthma_code": "asthma",
-        "has_copd_code": "copd",
-        "has_atrial_fibrillation_code": "artial_fibrillation",
+        "rural_urban_classification": "whether patient lives in rural or urban area",
+        "has_hypertension_code": "whether patient has hypertension",
+        "has_diabetes_type_2_code": "whether patient has type 2 diabetes",
+        "has_asthma_code": "whether patient has asthma",
+        "has_copd_code": "whether patient has COPD",
+        "has_atrial_fibrillation_code": "whether patient has atrial fibrillation",
     }
 
     # Create timeseries for the codes broken down by the variables of interest
     for code in codes_of_interest:
+        term = headers_dict[f"healthcare_at_home_{code}"]
         for variable, title in variable_and_title.items():
-            code_time_analysis(homecare_type, code, variable, title, population_df)
+            code_time_analysis(homecare_type, term, variable, title, population_df)
 
 
-def analysis_region(homecare_type: str, codes: list):
+def analysis_region(homecare_type: str):
     """Function to produce timeseries plots for each region"""
 
     dirs = homecare_type_dir(homecare_type)
 
-    codes = ["healthcare_at_home_" + s for s in codes]
+    headers_dict = create_headers_dict(homecare_type)
 
     # Create population data frame which includes all weeks and dictionary of
     # cohort size for each individual week
@@ -128,11 +144,11 @@ def analysis_region(homecare_type: str, codes: list):
 
     # Create data frame of sum totals for each index date for each oximetry code
     sum_regions = population_df.groupby(["index_date", "region"], as_index=False)[
-        codes
+        list(headers_dict.values())
     ].sum()
 
     # Apply redaction to entire data frame
-    for header in codes:
+    for header in list(headers_dict.values()):
         sum_regions = redact_to_five_and_round(sum_regions, header)
 
     # Save the dataframe
@@ -168,19 +184,21 @@ def analysis_region(homecare_type: str, codes: list):
             pass
 
 
-def analysis_timeseries(homecare_type: str, codes: list):
+def analysis_timeseries(homecare_type: str):
     """Function to produce timeseries plot"""
 
     dirs = homecare_type_dir(homecare_type)
 
-    codes = ["healthcare_at_home_" + s for s in codes]
+    headers_dict = create_headers_dict(homecare_type)
 
     # Create population dataframe which includes all weeks and dictionary of
     # cohort size for each individual week
     population_df = create_population_df(homecare_type, dirs["input_dir"])
 
     # Create dataframe of sum totals for each index date
-    sum_df = population_df.groupby(["index_date"], as_index=False)[codes].sum()
+    sum_df = population_df.groupby(["index_date"], as_index=False)[
+        list(headers_dict.values())
+    ].sum()
     # Redact values less than or equal to 5 and round all other values up to
     # nearest 5
     sum_df = redact_and_round_df(sum_df)

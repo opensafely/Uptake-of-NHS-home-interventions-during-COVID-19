@@ -1,9 +1,15 @@
 from cohortextractor import codelist_from_csv, codelist
+
+import pandas as pd
 import sys
 
 if "." not in sys.path:
     sys.path.insert(0, ".")
 
+# Codes dictionaries: Keys are SNOMED codes, values are the terms they refer to
+# Create pulse oximetry dictionary
+oximetry_codes_df = pd.read_csv("codelists/opensafely-pulse-oximetry.csv")
+oximetry_codes_dict = oximetry_codes_df.set_index("code")["term"].to_dict()
 
 # Pulse oximetry codes from OpenCodelists
 pulse_oximetry_codes = codelist_from_csv(
@@ -11,7 +17,6 @@ pulse_oximetry_codes = codelist_from_csv(
 )
 
 # Blood pressure codes
-# Codes dictionaries: Keys are SNOMED codes, values are the terms they refer to
 bp_codes_dict = {
     413606001: "Average home systolic blood pressure",
     314446007: "Average day interval systolic blood pressure",

@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import sys
 
+from textwrap import wrap
+
 if "." not in sys.path:
     sys.path.insert(0, ".")
 from analysis.analysis_data_processing.analysis_data_processing import homecare_type_dir
@@ -21,13 +23,13 @@ def produce_plot(
     plt.legend(loc="upper left", bbox_to_anchor=(1.0, 1.0), fontsize=20)
     plt.xlabel(x_label, fontsize=20)
     plt.ylabel(y_label, fontsize=20)
-    plt.title(title, fontsize=40)
+    plt.title("\n".join(wrap(title)), fontsize=40)
 
 
 def produce_pivot_plot(
     homecare_type: str,
     counts_df: pd.DataFrame,
-    code: str,
+    term: str,
     variable: str,
     variable_title: str,
     pivot_values: str,
@@ -43,7 +45,7 @@ def produce_pivot_plot(
     )
 
     # Produce plot
-    plot_title = "Patients with " + " code, grouped by " + variable_title
+    plot_title = "Patients with \'" + term + "\' code, grouped by " + variable_title
     produce_plot(pivot_df, plot_title, x_label="Date", y_label="Percentage")
 
     # Save plot
@@ -52,7 +54,7 @@ def produce_pivot_plot(
         dirs["output_dir"]
         + homecare_type
         + "_plot_code_"
-        + code
+        + term.replace(" ", "_")
         + "_"
         + variable
         + "_timeseries.png",
