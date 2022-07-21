@@ -36,7 +36,7 @@ actions:
   generate_study_population_bp:
     run: cohortextractor:latest generate_cohort
       --study-definition study_definition_bp
-      --index-date-range "2019-04-01 to 2022-05-30 1 by week"
+      --index-date-range "2019-04-01 to 2022-05-30 by week"
       --with-end-date-fix
     outputs:
       highly_sensitive:

@@ -102,6 +102,13 @@ def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
                 0: "Does not have atrial fibrillation",
                 1: "Has atrial fibrillation",
             },
+            "imd_quintile": {
+                1: "1",
+                2: "2",
+                3: "3",
+                4: "4",
+                5: "5",
+            },
         }
     )
 
