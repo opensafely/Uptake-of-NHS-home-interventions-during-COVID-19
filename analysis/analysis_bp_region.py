@@ -6,8 +6,7 @@ import sys
 if "." not in sys.path:
     sys.path.insert(0, ".")
 from analysis.analysis_data_processing.analysis_breakdowns import analysis_region
-from analysis.codelist import bp_codes
 
 homecare_type = "bp"
 
-analysis_region(homecare_type, bp_codes)
+analysis_region(homecare_type)

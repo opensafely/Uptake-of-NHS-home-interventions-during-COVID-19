@@ -10,6 +10,19 @@ import sys
 if "." not in sys.path:
     sys.path.insert(0, ".")
 from analysis.analysis_data_processing.redaction import *
+from analysis.codelist import oximetry_codes_dict, bp_codes_dict, proactive_codes_dict
+
+
+def create_headers_dict(homecare_type: str) -> Dict:
+    """Function to create header dictionary for the given homecare type,
+    whose keys are the headers in input csv files (i.e. healthcare_at_home_code)
+    and values are the terms they refer to"""
+    # Find correct codes dictionary
+    codes_dict_name = f"{homecare_type}_codes_dict"
+    codes_dict = globals()[codes_dict_name]
+    # Convert codes to headers used in population dataframe
+    headers_dict = {f"healthcare_at_home_{k}": v for k, v in codes_dict.items()}
+    return headers_dict
 
 
 def create_population_df(homecare_type: str, dir: str) -> pd.DataFrame:
@@ -24,8 +37,6 @@ def create_population_df(homecare_type: str, dir: str) -> pd.DataFrame:
     ]
     # append the directory path to filename
     filepaths_dir = [dir + filepath for filepath in filepaths]
-
-    filepaths_dir
 
     # create empty list to append dataframes
     dfs = []
@@ -45,6 +56,10 @@ def create_population_df(homecare_type: str, dir: str) -> pd.DataFrame:
 
     # Combine all the dataframes together
     population_df = pd.concat(dfs)
+
+    # Rename the headers
+    headers_dict = create_headers_dict(homecare_type)
+    population_df.rename(columns=headers_dict, inplace=True)
 
     return population_df
 
@@ -126,11 +141,7 @@ def create_monthly_counts_table(
     counts_df["denominators"][counts_df["denominators"] <= 100] = "Less than 100"
 
     # Apply redacting and rounding to the counts
-    if column_name == "age_and_shielding":
-        counts_df["counts"] = redact_and_round_column(counts_df["counts"])
-        counts_df = further_redaction_all(counts_df, "counts")
-    else:
-        counts_df = redact_to_five_and_round(counts_df, "counts")
+    counts_df = redact_to_five_and_round(counts_df, "counts")
 
     # Calculate the percentages
     counts_df["percentage"] = round(
