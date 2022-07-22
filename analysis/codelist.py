@@ -57,19 +57,11 @@ covid_vaccine_2_EMIS_codes = codelist_from_csv(
     column="code",
 )
 
-# Ethnicity list
-# Using vaccine uptake ethnicty list
+# Ethnicity
 ethnicity_codelist = codelist_from_csv(
-    "codelists/primis-covid19-vacc-uptake-eth2001.csv",
+    "codelists/opensafely-ethnicity-snomed-0removed.csv",
     system="snomed",
-    column="code",
-    category_column="grouping_6_id",
-)
-# Alternative - use opensafely ethnicity list
-ethnicity_codes = codelist_from_csv(
-    "codelists/opensafely-ethnicity.csv",
-    system="ctv3",
-    column="Code",
+    column="snomedcode",
     category_column="Grouping_6",
 )
 

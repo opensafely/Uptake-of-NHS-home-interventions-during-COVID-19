@@ -81,6 +81,9 @@ def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
     # Add age category column to population dataframe
     population_df = add_age_category(population_df)
 
+    # Populate cells with missing ethnicity
+    population_df["ethnicity"].fillna("Missing", inplace=True)
+
     # Replace binary flags and abbreviations with meaningful values
     population_df = population_df.replace(
         {
@@ -108,6 +111,16 @@ def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
                 3: "3",
                 4: "4",
                 5: "5",
+            },
+            # Labels for ethnicity groupings are as stated in "About" section
+            # of codelist
+            # https://www.opencodelists.org/codelist/opensafely/ethnicity-snomed-0removed/2e641f61/
+            "ethnicity": {
+                1: "White",
+                2: "Mixed",
+                3: "Asian or Asian British",
+                4: "Black or Black British",
+                5: "Chinese or Other Ethnic Groups",
             },
         }
     )
