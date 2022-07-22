@@ -8,7 +8,7 @@ study = StudyDefinition(
     default_expectations={
         "date": {"earliest": "1980-01-01", "latest": "today"},
         "rate": "uniform",
-        "incidence": 0.05,
+        "incidence": 0.8,
     },
     index_date="2022-06-05",
     population=patients.all(),
@@ -16,23 +16,23 @@ study = StudyDefinition(
     ethnicity=patients.categorised_as(
         {
             "Missing": "DEFAULT",
-            "White": "eth='1' OR (NOT eth AND ethnicity_sus='1')",
-            "Mixed": "eth='2' OR (NOT eth AND ethnicity_sus='2')",
-            "South Asian": "eth='3' OR (NOT eth AND ethnicity_sus='3')",
-            "Black": "eth='4' OR (NOT eth AND ethnicity_sus='4')",
-            "Other": "eth='5' OR (NOT eth AND ethnicity_sus='5')",
+            "1": "eth='1' OR (NOT eth AND ethnicity_sus='1')",
+            "2": "eth='2' OR (NOT eth AND ethnicity_sus='2')",
+            "3": "eth='3' OR (NOT eth AND ethnicity_sus='3')",
+            "4": "eth='4' OR (NOT eth AND ethnicity_sus='4')",
+            "5": "eth='5' OR (NOT eth AND ethnicity_sus='5')",
         },
         return_expectations={
             "category": {
                 "ratios": {
-                    "White": 0.2,
-                    "Mixed": 0.2,
-                    "South Asian": 0.2,
-                    "Black": 0.2,
-                    "Other": 0.2,
+                    "1": 0.2,
+                    "2": 0.2,
+                    "3": 0.2,
+                    "4": 0.2,
+                    "5": 0.2,
                 }
             },
-            "incidence": 0.4,
+            "incidence": 0.8,
         },
         ethnicity_sus=patients.with_ethnicity_from_sus(
             returning="group_6",

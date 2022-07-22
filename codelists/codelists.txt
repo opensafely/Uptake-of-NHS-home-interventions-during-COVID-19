@@ -3,11 +3,10 @@ primis-covid19-vacc-uptake/covadm1/v1
 primis-covid19-vacc-uptake/covadm2/v1
 primis-covid19-vacc-uptake/shield/v1
 opensafely/nhs-england-care-homes-residential-status/3712ef13/
-opensafely/ethnicity/2020-04-27/
-primis-covid19-vacc-uptake/eth2001/v1/
 opensafely/hypertension-snomed/2020-04-28
 opensafely/type-2-diabetes/2020-06-29
 opensafely/asthma-diagnosis/2020-04-15
 opensafely/current-copd/2020-05-06
 opensafely/atrial-fibrillation-or-flutter/2020-07-30
 opensafely/cholesterol-tests-numerical-value/7e3a22f3
+opensafely/ethnicity-snomed-0removed/2e641f61/
