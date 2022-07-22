@@ -86,7 +86,7 @@ def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
         {
             "sex": {"M": "Male", "F": "Female", "I": "Intersex", "U": "Unknown"},
             "care_home": {0: "Not a care home resident", 1: "Care home resident"},
-            "shielding": {0: "Shielding", 1: "Not shielding"},
+            "shielding": {0: "Not Shielding", 1: "Shielding"},
             "rural_urban_classification": {"rural": "Rural", "urban": "Urban"},
             "has_hypertension_code": {
                 0: "Does not have hypertension",
@@ -101,6 +101,13 @@ def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
             "has_atrial_fibrillation_code": {
                 0: "Does not have atrial fibrillation",
                 1: "Has atrial fibrillation",
+            },
+            "imd_quintile": {
+                1: "1",
+                2: "2",
+                3: "3",
+                4: "4",
+                5: "5",
             },
         }
     )

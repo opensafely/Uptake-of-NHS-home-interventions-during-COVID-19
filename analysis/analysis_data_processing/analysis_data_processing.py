@@ -14,7 +14,7 @@ from analysis.codelist import oximetry_codes_dict, bp_codes_dict, proactive_code
 
 
 def create_headers_dict(homecare_type: str) -> Dict:
-    """Fucntion to create header dictionary for the given homecare type,
+    """Function to create header dictionary for the given homecare type,
     whose keys are the headers in input csv files (i.e. healthcare_at_home_code)
     and values are the terms they refer to"""
     # Find correct codes dictionary
