@@ -25,7 +25,8 @@ actions:
   join_cohorts_oximetry:
     run: cohort-joiner:v0.0.30
       --lhs output/oximetry/0.1_generate_study_population/input_oximetry*.csv
-      --rhs output/input_static.csv --output-dir output/oximetry/0.2_join_cohorts/
+      --rhs output/input_static.csv 
+      --output-dir output/oximetry/0.2_join_cohorts/
     needs:
       [generate_study_population_oximetry, generate_study_definition_static]
     outputs:
@@ -45,7 +46,8 @@ actions:
   join_cohorts_bp:
     run: cohort-joiner:v0.0.30
       --lhs output/bp/0.1_generate_study_population/input_bp*.csv
-      --rhs output/input_static.csv --output-dir output/bp/0.2_join_cohorts/
+      --rhs output/input_static.csv 
+      --output-dir output/bp/0.2_join_cohorts/
     needs: [generate_study_population_bp, generate_study_definition_static]
     outputs:
       highly_sensitive:
@@ -64,7 +66,8 @@ actions:
   join_cohorts_proactive:
     run: cohort-joiner:v0.0.30
       --lhs output/proactive/0.1_generate_study_population/input_proactive*.csv
-      --rhs output/input_static.csv --output-dir output/proactive/0.2_join_cohorts/
+      --rhs output/input_static.csv 
+      --output-dir output/proactive/0.2_join_cohorts/
     needs:
       [generate_study_population_proactive, generate_study_definition_static]
     outputs:
