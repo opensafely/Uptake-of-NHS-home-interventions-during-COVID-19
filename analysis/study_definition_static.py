@@ -39,9 +39,16 @@ study = StudyDefinition(
             use_most_frequent_code=True,
             return_expectations={
                 "category": {
-                    "ratios": {"1": 0.2, "2": 0.2, "3": 0.2, "4": 0.2, "5": 0.2}
+                    "ratios": {
+                        "1": 0.2,
+                        "2": 0.2,
+                        "3": 0.2,
+                        "4": 0.2,
+                        "5": 0.1,
+                        "Missing": 0.1,
+                    }
                 },
-                "incidence": 0.4,
+                "incidence": 0.8,
             },
         ),
         eth=patients.with_these_clinical_events(
