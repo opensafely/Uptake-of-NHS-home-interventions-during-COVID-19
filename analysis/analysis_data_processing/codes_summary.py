@@ -18,8 +18,8 @@ def number_of_uses_of_code(homecare_type: str, df: pd.DataFrame):
     dirs = homecare_type_dir(homecare_type)
 
     i = 1
-    for code in df.columns[1:]:
-        code_summary = df.groupby(code)["patient_id"].nunique()
+    for header in df.columns[1:]:
+        code_summary = df.groupby(header)["patient_id"].nunique()
         code_summary_df = pd.DataFrame(code_summary)
         code_summary_df.rename(
             columns={"patient_id": "Total number of patients"},
@@ -27,7 +27,7 @@ def number_of_uses_of_code(homecare_type: str, df: pd.DataFrame):
         )
         # Round and redact dataframe and save to csv
         redact_and_round_df(code_summary_df).to_csv(
-            f"""{dirs["output_dir"]}{homecare_type}_table_code_counts_{i}_{code}.csv"""
+            f"""{dirs["output_dir"]}{homecare_type}_table_code_counts_{i}_{header.replace (" ", "_")}.csv"""
         )
         i = i + 1
 
@@ -79,7 +79,7 @@ def code_population(homecare_type: str, df: pd.DataFrame, headers: str):
         )
         # Round and redact dataframe and save to csv
         redact_and_round_df(code_summary_df).to_csv(
-            f"""{dirs["output_dir"]}{homecare_type}_patient_id_total_{i}_{header.replace (" ", "_")}.csv"""
+            f"""{dirs["output_dir"]}{homecare_type}_table_patient_id_total_{i}_{header.replace (" ", "_")}.csv"""
         )
         i = i + 1
 
