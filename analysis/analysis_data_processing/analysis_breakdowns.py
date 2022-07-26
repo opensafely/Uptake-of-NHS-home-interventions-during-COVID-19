@@ -116,11 +116,11 @@ def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
             # of codelist
             # https://www.opencodelists.org/codelist/opensafely/ethnicity-snomed-0removed/2e641f61/
             "ethnicity": {
-                1: "White",
-                2: "Mixed",
-                3: "Asian or Asian British",
-                4: "Black or Black British",
-                5: "Chinese or Other Ethnic Groups",
+                1.0: "White",
+                2.0: "Mixed",
+                3.0: "Asian or Asian British",
+                4.0: "Black or Black British",
+                5.0: "Chinese or Other Ethnic Groups",
             },
         }
     )
