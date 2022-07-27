@@ -84,44 +84,113 @@ def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
     # Populate cells with missing ethnicity
     population_df["ethnicity"].fillna("Missing", inplace=True)
 
+    # # Replace binary flags and abbreviations with meaningful values
+    # population_df = population_df.replace(
+    #     {
+    #         "sex": {"M": "Male", "F": "Female", "I": "Intersex", "U": "Unknown"},
+    #         "care_home": {0: "Not a care home resident", 1: "Care home resident"},
+    #         "shielding": {0: "Not Shielding", 1: "Shielding"},
+    #         "rural_urban_classification": {"rural": "Rural", "urban": "Urban"},
+    #         "has_hypertension_code": {
+    #             0: "Does not have hypertension",
+    #             1: "Has hypertension",
+    #         },
+    #         "has_diabetes_type_2_code": {
+    #             0: "Does not have type 2 diabetes",
+    #             1: "Has type 2 diabetes",
+    #         },
+    #         "has_asthma_code": {0: "Does not have asthma", 1: "Has asthma"},
+    #         "has_copd_code": {0: "Does not have COPD", 1: "Has COPD"},
+    #         "has_atrial_fibrillation_code": {
+    #             0: "Does not have atrial fibrillation",
+    #             1: "Has atrial fibrillation",
+    #         },
+    #         "imd_quintile": {
+    #             1: "1",
+    #             2: "2",
+    #             3: "3",
+    #             4: "4",
+    #             5: "5",
+    #         },
+    #         # Labels for ethnicity groupings are as stated in "About" section
+    #         # of codelist
+    #         # https://www.opencodelists.org/codelist/opensafely/ethnicity-snomed-0removed/2e641f61/
+    #         "ethnicity": {
+    #             "1": "White",
+    #             "2": "Mixed",
+    #             "3": "Asian or Asian British",
+    #             "4": "Black or Black British",
+    #             "5": "Chinese or Other Ethnic Groups",
+    #         },
+    #     }
+    # )
+
     # Replace binary flags and abbreviations with meaningful values
     population_df = population_df.replace(
+        {"sex": {"M": "Male", "F": "Female", "I": "Intersex", "U": "Unknown"}}
+    )
+    population_df = population_df.replace(
+        {"care_home": {0: "Not a care home resident", 1: "Care home resident"}}
+    )
+    population_df = population_df.replace(
+        {"shielding": {0: "Not Shielding", 1: "Shielding"}}
+    )
+    population_df = population_df.replace(
+        {"rural_urban_classification": {"rural": "Rural", "urban": "Urban"}}
+    )
+    population_df = population_df.replace(
         {
-            "sex": {"M": "Male", "F": "Female", "I": "Intersex", "U": "Unknown"},
-            "care_home": {0: "Not a care home resident", 1: "Care home resident"},
-            "shielding": {0: "Not Shielding", 1: "Shielding"},
-            "rural_urban_classification": {"rural": "Rural", "urban": "Urban"},
             "has_hypertension_code": {
                 0: "Does not have hypertension",
                 1: "Has hypertension",
-            },
+            }
+        }
+    )
+    population_df = population_df.replace(
+        {
             "has_diabetes_type_2_code": {
                 0: "Does not have type 2 diabetes",
                 1: "Has type 2 diabetes",
-            },
-            "has_asthma_code": {0: "Does not have asthma", 1: "Has asthma"},
-            "has_copd_code": {0: "Does not have COPD", 1: "Has COPD"},
+            }
+        }
+    )
+    population_df = population_df.replace(
+        {"has_asthma_code": {0: "Does not have asthma", 1: "Has asthma"}}
+    )
+    population_df = population_df.replace(
+        {"has_copd_code": {0: "Does not have COPD", 1: "Has COPD"}}
+    )
+    population_df = population_df.replace(
+        {
             "has_atrial_fibrillation_code": {
                 0: "Does not have atrial fibrillation",
                 1: "Has atrial fibrillation",
-            },
+            }
+        }
+    )
+    population_df = population_df.replace(
+        {
             "imd_quintile": {
                 1: "1",
                 2: "2",
                 3: "3",
                 4: "4",
                 5: "5",
-            },
-            # Labels for ethnicity groupings are as stated in "About" section
-            # of codelist
-            # https://www.opencodelists.org/codelist/opensafely/ethnicity-snomed-0removed/2e641f61/
+            }
+        }
+    )
+    # Labels for ethnicity groupings are as stated in "About" section
+    # of codelist
+    # https://www.opencodelists.org/codelist/opensafely/ethnicity-snomed-0removed/2e641f61/
+    population_df = population_df.replace(
+        {
             "ethnicity": {
                 "1": "White",
                 "2": "Mixed",
                 "3": "Asian or Asian British",
                 "4": "Black or Black British",
                 "5": "Chinese or Other Ethnic Groups",
-            },
+            }
         }
     )
 
