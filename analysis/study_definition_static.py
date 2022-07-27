@@ -29,7 +29,8 @@ study = StudyDefinition(
                     "2": 0.2,
                     "3": 0.2,
                     "4": 0.2,
-                    "5": 0.2,
+                    "5": 0.1,
+                    "Missing": 0.1,
                 }
             },
             "incidence": 0.8,
@@ -45,7 +46,6 @@ study = StudyDefinition(
                         "3": 0.2,
                         "4": 0.2,
                         "5": 0.1,
-                        "Missing": 0.1,
                     }
                 },
                 "incidence": 0.8,
