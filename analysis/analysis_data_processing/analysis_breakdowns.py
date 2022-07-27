@@ -135,9 +135,9 @@ def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
     population_df = population_df.replace(
         {"shielding": {0: "Not Shielding", 1: "Shielding"}}
     )
-    population_df = population_df.replace(
-        {"rural_urban_classification": {"rural": "Rural", "urban": "Urban"}}
-    )
+    # population_df = population_df.replace(
+    #     {"rural_urban_classification": {"rural": "Rural", "urban": "Urban"}}
+    # )
     population_df = population_df.replace(
         {
             "has_hypertension_code": {
