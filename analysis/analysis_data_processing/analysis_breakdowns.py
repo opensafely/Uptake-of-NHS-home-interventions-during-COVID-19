@@ -135,9 +135,9 @@ def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
     population_df = population_df.replace(
         {"shielding": {0: "Not Shielding", 1: "Shielding"}}
     )
-    population_df = population_df.replace(
-        {"rural_urban_classification": {"rural": "Rural", "urban": "Urban"}}
-    )
+    # population_df = population_df.replace(
+    #     {"rural_urban_classification": {"rural": "Rural", "urban": "Urban"}}
+    # )
     population_df = population_df.replace(
         {
             "has_hypertension_code": {
@@ -202,7 +202,7 @@ def analysis_breakdowns(homecare_type: str, codes_of_interest: list):
         "age_group": "age",
         "ethnicity": "ethnicity",
         "imd_quintile": "IMD quintile (1 = most deprived, 5 = least deprived)",
-        "rural_urban_classification": "whether patient lives in rural or urban area",
+        #"rural_urban_classification": "whether patient lives in rural or urban area",
         "has_hypertension_code": "whether patient has hypertension",
         "has_diabetes_type_2_code": "whether patient has type 2 diabetes",
         "has_asthma_code": "whether patient has asthma",
