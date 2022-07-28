@@ -44,19 +44,6 @@ care_home_codes = codelist_from_csv(
     column="code",
 )
 
-# COVID vaccination administration in EMIS
-covid_vaccine_1_EMIS_codes = codelist_from_csv(
-    "codelists/primis-covid19-vacc-uptake-covadm1.csv",
-    system="snomed",
-    column="code",
-)
-
-covid_vaccine_2_EMIS_codes = codelist_from_csv(
-    "codelists/primis-covid19-vacc-uptake-covadm2.csv",
-    system="snomed",
-    column="code",
-)
-
 # Ethnicity
 ethnicity_codelist = codelist_from_csv(
     "codelists/opensafely-ethnicity-snomed-0removed.csv",

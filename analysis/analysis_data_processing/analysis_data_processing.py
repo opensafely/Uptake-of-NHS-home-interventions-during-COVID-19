@@ -136,9 +136,9 @@ def create_monthly_counts_table(
     # Convert to monthly table
     counts_df = convert_weekly_to_monthly(counts_df, column_name)
 
-    # Exclude denominators which are less than 100 (higher variation will make
+    # Exclude denominators which are less than 500 (higher variation will make
     # timeseries less meaningful)
-    counts_df["denominators"][counts_df["denominators"] <= 100] = "Less than 100"
+    counts_df["denominators"][counts_df["denominators"] <= 500] = "Less than 500"
 
     # Apply redacting and rounding to the counts
     counts_df = redact_to_five_and_round(counts_df, "counts")

@@ -65,15 +65,6 @@ common_variables = dict(
             },
         },
     ),
-    # rural_urban_classification
-    rural_urban_classification=patients.address_as_of(
-        date="index_date",
-        returning="rural_urban_classification",
-        return_expectations={
-            "rate": "universal",
-            "category": {"ratios": {"rural": 0.3, "urban": 0.7}},
-        },
-    ),
     # region the patient lives in
     region=patients.registered_practice_as_of(
         "2020-02-01",
@@ -93,82 +84,6 @@ common_variables = dict(
                     "South West": 0.1,
                 },
             },
-        },
-    ),
-    # Covid vaccination 1
-    covid_vax_1_date=patients.with_vaccination_record(
-        returning="date",
-        tpp={
-            "target_disease_matches": "SARS-2 CORONAVIRUS",
-        },
-        emis={
-            "procedure_codes": covid_vaccine_1_EMIS_codes,
-        },
-        find_first_match_in_period=True,
-        on_or_before="index_date",
-        date_format="YYYY-MM-DD",
-        return_expectations={
-            "date": {
-                "earliest": "2020-12-08",
-                "latest": "2022-02-01",
-            },
-            "incidence": 0.9,
-        },
-    ),
-    # Covid vaccination 2
-    covid_vax_2_date=patients.with_vaccination_record(
-        returning="date",
-        tpp={
-            "target_disease_matches": "SARS-2 CORONAVIRUS",
-        },
-        emis={
-            "procedure_codes": covid_vaccine_2_EMIS_codes,
-        },
-        find_first_match_in_period=True,
-        between=["covid_vax_1_date + 15 days", "index_date"],
-        date_format="YYYY-MM-DD",
-        return_expectations={
-            "date": {
-                "earliest": "2020-12-31",
-                "latest": "2022-02-01",
-            },
-            "incidence": 0.9,
-        },
-    ),
-    # Covid vaccination 3
-    covid_vax_3_date=patients.with_vaccination_record(
-        returning="date",
-        tpp={
-            "target_disease_matches": "SARS-2 CORONAVIRUS",
-        },
-        emis={
-            "procedure_codes": covid_vaccine_2_EMIS_codes,
-        },
-        find_first_match_in_period=True,
-        between=["covid_vax_2_date + 15 days", "index_date"],
-        date_format="YYYY-MM-DD",
-        return_expectations={
-            "date": {
-                "earliest": "2020-01-15",
-                "latest": "2022-02-01",
-            },
-            "incidence": 0.7,
-        },
-    ),
-    # Covid test result in the index week
-    covid_positive_test_date=patients.with_test_result_in_sgss(
-        pathogen="SARS-CoV-2",
-        test_result="positive",
-        returning="binary_flag",
-        between=["index_date", "index_date + 6 days"],
-        find_first_match_in_period=True,
-        restrict_to_earliest_specimen_date=False,
-        return_expectations={
-            "date": {
-                "earliest": "2020-12-31",
-                "latest": "2022-02-01",
-            },
-            "incidence": 0.5,
         },
     ),
     # Patient has hypertension
