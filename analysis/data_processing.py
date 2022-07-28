@@ -14,7 +14,7 @@ def make_variable(
 
     if returning == "number_of_matches_in_period":
         return_expectations = {
-            "incidence": 0.1,
+            "incidence": 1,
             "int": {"distribution": "normal", "mean": 3, "stddev": 1}
         }
         ignore_missing_values=False

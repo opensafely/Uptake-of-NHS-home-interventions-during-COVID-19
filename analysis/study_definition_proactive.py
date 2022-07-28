@@ -19,7 +19,7 @@ study = StudyDefinition(
     # Define default expectations
     default_expectations={
         "date": {"earliest": "2019-04-01", "latest": "2022-02-01"},
-        "incidence": "0.2",
+        "incidence": "1",
         "rate": "uniform",
     },
     # Define population inclusion criteria
@@ -34,10 +34,11 @@ study = StudyDefinition(
             proactive_codes, between=["2019-04-01", "2022-06-05"]
         ),
     ),
-
-        # proactive care date
-        # Code to loop over proactive_codes to find the first match in the period
-        **loop_over_codes(proactive_codes, "index_date", returning="number_of_matches_in_period"),
-        # Loop over the common variables
-        **common_variables
+    # proactive care date
+    # Code to loop over proactive_codes to find the first match in the period
+    **loop_over_codes(
+        proactive_codes, "index_date", returning="number_of_matches_in_period"
+    ),
+    # Loop over the common variables
+    **common_variables
 )

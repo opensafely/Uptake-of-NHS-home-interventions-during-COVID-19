@@ -16,7 +16,7 @@ study = StudyDefinition(
     # Define default expectations
     default_expectations={
         "date": {"earliest": "2019-04-01", "latest": "2022-02-01"},
-        "incidence": "0.2",
+        "incidence": "1",
         "rate": "uniform",
     },
     # Define population inclusion criteria
