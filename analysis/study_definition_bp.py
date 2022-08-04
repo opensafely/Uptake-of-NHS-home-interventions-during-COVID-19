@@ -28,7 +28,7 @@ study = StudyDefinition(
             (imd_quintile != 0)
         """,
         has_bp_code=patients.with_these_clinical_events(
-            bp_codes, between=["2019-04-01", "2022-06-05"])
+            bp_codes, between=["index_date", "index_date + 6 days"])
         ),
         
         # blood pressure monitoring date

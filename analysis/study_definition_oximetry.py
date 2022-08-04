@@ -31,7 +31,7 @@ study = StudyDefinition(
         """,
         has_oximetry_code=patients.with_these_clinical_events(
             pulse_oximetry_codes,
-            between=["2019-04-01", "2022-06-05"],
+            between=["index_date", "index_date + 6 days"],
         ),
     ),
     # pulse oximetry date

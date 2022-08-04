@@ -31,7 +31,7 @@ study = StudyDefinition(
             (imd_quintile != 0)
         """,
         has_proactive_code=patients.with_these_clinical_events(
-            proactive_codes, between=["2019-04-01", "2022-06-05"]
+            proactive_codes, between=["index_date", "index_date + 6 days"]
         ),
     ),
     # proactive care date
