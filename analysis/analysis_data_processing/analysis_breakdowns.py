@@ -52,7 +52,7 @@ def code_time_analysis(
 
     # Save the dataframe in outputs folder
     summary_df.to_csv(
-        f"""{dirs["output_dir"]}{homecare_type}_table_code_term_{variable}_counts.csv"""
+        f"""{dirs["output_dir"]}{homecare_type}_table_{term}_{variable}_counts.csv"""
     )
 
     # Produce the required timeseries

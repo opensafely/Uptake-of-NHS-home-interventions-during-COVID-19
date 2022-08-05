@@ -65,6 +65,8 @@ def code_combinations(
 
 
 def code_population(homecare_type: str, df: pd.DataFrame, headers: str):
+    """Function to sumamrise how many patients received each SNOMED code
+    each week"""
 
     dirs = homecare_type_dir(homecare_type)
 
@@ -107,4 +109,5 @@ def code_analysis(homecare_type: str):
     # Summarise all code combinations used over time period
     code_combinations(homecare_type, patient_codes)
 
+    # Summarise how many patients received each code each week
     code_population(homecare_type, population_df, headers)

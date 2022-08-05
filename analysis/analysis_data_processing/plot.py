@@ -53,7 +53,7 @@ def produce_pivot_plot(
     plt.savefig(
         dirs["output_dir"]
         + homecare_type
-        + "_plot_code_"
+        + "_plot_"
         + term.replace(" ", "_")
         + "_"
         + variable
