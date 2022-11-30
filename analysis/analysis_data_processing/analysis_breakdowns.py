@@ -46,7 +46,17 @@ def code_time_analysis(
         codes_df.groupby(["index_date", variable])["patient_id"].nunique().reset_index()
     )
     summary_df.rename(columns={"patient_id": "counts"}, inplace=True)
+    
+    # Add in missing index dates where necessary. Create full date range
+    all_dates = pd.date_range(start=summary_df['index_date'].min(),end=summary_df['index_date'].max(), freq='7D')
 
+    # Create dataframe of all possible combinations of date-terms
+    complete_df = pd.merge(pd.DataFrame({'index_date':all_dates, 'key':0}),
+                        pd.DataFrame({variable:summary_df[variable].unique(), 'key':0}), how='outer').drop('key', axis=1)
+                        
+    # Merge any missing date-term combinations in and fill nulls with zero counts:
+    summary_df = pd.merge(summary_df, complete_df, how='right', on=('index_date', variable)).fillna(0, downcast='infer')
+       
     # Add denominators and percentages, change dataframe to monthly and redact and round
     summary_df = create_monthly_counts_table(codes_df, summary_df, variable)
 
