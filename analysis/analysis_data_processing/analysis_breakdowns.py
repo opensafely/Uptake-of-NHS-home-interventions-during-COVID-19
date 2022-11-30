@@ -186,10 +186,20 @@ def analysis_region(homecare_type: str):
     # Create list of regions in the data
     region_list = population_df["region"].unique()
 
+    # Create list of indexes in data
+    index_list = population_df["index_date"].unique()
+
+    # Create multiindex from the product regions and index_dates
+    s = pd.MultiIndex.from_product([region_list,index_list])
+
     # Create data frame of sum totals for each index date for each oximetry code
     sum_regions = population_df.groupby(["index_date", "region"], as_index=False)[
         list(headers_dict.values())
     ].sum()
+
+    # Add add in any index_date-region combination that are missing (to avoid disclosure by group)
+    sum_regions.set_index(['region', 'index_date']).reindex(s).reset_index().rename({
+        'level_0':'region','level_1':'index_date'},axis=1).fillna(0)
 
     # Apply redaction to entire data frame
     for header in list(headers_dict.values()):

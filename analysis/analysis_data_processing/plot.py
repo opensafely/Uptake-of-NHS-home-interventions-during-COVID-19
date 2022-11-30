@@ -69,5 +69,5 @@ def homecare_title(homecare_type):
     elif homecare_type == "bp":
         title = "Blood Pressure Monitoring Codes"
     elif homecare_type == "proactive":
-        title = "Procative Care Code"
+        title = "Proactive Care Code"
     return title
