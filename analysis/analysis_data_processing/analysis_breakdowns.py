@@ -43,12 +43,12 @@ def code_time_analysis(
 
     # Count the number of patients in each group for each index date
     summary_df = (
-        codes_df.groupby(["index_date", variable])["patient_id"].nunique().reset_index()
+        codes_df.groupby([codes_df['index_date'].dt.to_period('M'), variable])["patient_id"].nunique().reset_index()
     )
     summary_df.rename(columns={"patient_id": "counts"}, inplace=True)
     
     # Add in missing index dates where necessary. Create full date range
-    all_dates = pd.date_range(start=summary_df['index_date'].min(),end=summary_df['index_date'].max(), freq='7D')
+    all_dates = (pd.date_range(start=summary_df['index_date'].min().to_timestamp(),end=summary_df['index_date'].max().to_timestamp(), freq='M')).to_period('M')
 
     # Create dataframe of all possible combinations of date-terms
     complete_df = pd.merge(pd.DataFrame({'index_date':all_dates, 'key':0}),
@@ -57,8 +57,16 @@ def code_time_analysis(
     # Merge any missing date-term combinations in and fill nulls with zero counts:
     summary_df = pd.merge(summary_df, complete_df, how='right', on=('index_date', variable)).fillna(0, downcast='infer')
        
-    # Add denominators and percentages, change dataframe to monthly and redact and round
-    summary_df = create_monthly_counts_table(codes_df, summary_df, variable)
+    # Add denominators and percentages and redact and round
+    summary_df["denominators"] = summary_df.groupby("index_date")['counts'].transform(sum)
+    summary_df = redact_to_five_and_round(summary_df, "counts")
+
+    # Calculate the percentages
+    summary_df["percentage"] = round(
+        pd.to_numeric(summary_df["counts"], errors="coerce")
+        / pd.to_numeric(summary_df["denominators"], errors="coerce")
+        * 100,
+        1,)
 
     # Save the dataframe in outputs folder
     summary_df.to_csv(
@@ -197,19 +205,19 @@ def analysis_region(homecare_type: str):
     region_list = population_df["region"].unique()
 
     # Create list of indexes in data
-    index_list = population_df["index_date"].unique()
+    index_list = population_df["index_date"].dt.to_period('M').unique()
 
     # Create multiindex from the product regions and index_dates
     s = pd.MultiIndex.from_product([region_list,index_list])
 
     # Create data frame of sum totals for each index date for each oximetry code
-    sum_regions = population_df.groupby(["index_date", "region"], as_index=False)[
+    sum_regions = population_df.groupby([population_df['index_date'].dt.to_period('M'), "region"], as_index=True)[
         list(headers_dict.values())
-    ].sum()
+    ].sum().reset_index()
 
     # Add add in any index_date-region combination that are missing (to avoid disclosure by group)
     sum_regions.set_index(['region', 'index_date']).reindex(s).reset_index().rename({
-        'level_0':'region','level_1':'index_date'},axis=1).fillna(0)
+        'level_0':'region','level_1':'index_date'},axis=1).fillna({k:0 for k in sum_regions.columns.drop(['index_date','region'])}, inplace=True)
 
     # Apply redaction to entire data frame
     for header in list(headers_dict.values()):
@@ -260,9 +268,10 @@ def analysis_timeseries(homecare_type: str):
     population_df = create_population_df(homecare_type, dirs["input_dir"])
 
     # Create dataframe of sum totals for each index date
-    sum_df = population_df.groupby(["index_date"], as_index=False)[
+    sum_df = population_df.groupby(population_df['index_date'].dt.to_period('M'), as_index=True)[
         list(headers_dict.values())
-    ].sum()
+    ].sum().reset_index()
+
     # Redact values less than or equal to 5 and round all other values up to
     # nearest 5
     sum_df = redact_and_round_df(sum_df)
