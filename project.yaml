@@ -64,6 +64,7 @@ actions:
       moderately_sensitive:
         oximetry_table_counts: output/oximetry/0.3_analysis_outputs/oximetry_table_counts.csv
         oximetry_plot_timeseries: output/oximetry/0.3_analysis_outputs/oximetry_plot_timeseries.png
+        oximetry_plot_code_timeseries:  output/oximetry/0.3_analysis_outputs/oximetry_plot_timeseries_*
 
   generate_oximetry_regional_timeseries:
     run: python:latest python analysis/analysis_oximetry_region.py
@@ -98,6 +99,7 @@ actions:
       moderately_sensitive:
         bp_table_counts: output/bp/0.3_analysis_outputs/bp_table_counts.csv
         bp_plot_timeseries: output/bp/0.3_analysis_outputs/bp_plot_timeseries.png
+        bp_plot_code_timeseries: output/bp/0.3_analysis_outputs/bp_plot_timeseries_*.png
 
   generate_bp_regional_timeseries:
     run: python:latest python analysis/analysis_bp_region.py
@@ -132,6 +134,7 @@ actions:
       moderately_sensitive:
         proactive_table_counts: output/proactive/0.3_analysis_outputs/proactive_table_counts.csv
         proactive_plot_timeseries: output/proactive/0.3_analysis_outputs/proactive_plot_timeseries.png
+        proactive_plot_code_timeseries: output/proactive/0.3_analysis_outputs/proactive_plot_timeseries_*.png
 
   generate_proactive_regional_timeseries:
     run: python:latest python analysis/analysis_proactive_region.py

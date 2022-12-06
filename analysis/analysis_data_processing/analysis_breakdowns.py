@@ -286,3 +286,10 @@ def analysis_timeseries(homecare_type: str):
     plt.savefig(
         dirs["output_dir"] + homecare_type + "_plot_timeseries", bbox_inches="tight"
     )
+
+    # Create timeseries seperately for each code type:
+    for key, value in headers_dict.items():
+        produce_plot(sum_df[value], "Timeseries showing use of "+value)
+        plt.savefig(
+            dirs["output_dir"] + homecare_type + "_plot_timeseries_" + key, bbox_inches="tight"
+        ) 
