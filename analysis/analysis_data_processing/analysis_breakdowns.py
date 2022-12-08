@@ -8,8 +8,7 @@ if "." not in sys.path:
 from analysis.analysis_data_processing.analysis_data_processing import (
     create_headers_dict,
     create_population_df,
-    homecare_type_dir,
-    create_monthly_counts_table,
+    homecare_type_dir
 )
 from analysis.analysis_data_processing.plot import *
 from analysis.analysis_data_processing.redaction import *
